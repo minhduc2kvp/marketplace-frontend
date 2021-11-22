@@ -1,0 +1,64 @@
+.v-toast {
+  .v-toast__item {
+    background-color: $color-gray-5;
+    font-family: $font-regular;
+    font-size: 14px;
+    color: $color-white;
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    height: max-content;
+    min-height: max-content;
+    .v-toast__icon {
+      display: block;
+      background-image: url('../icon/help-circle.svg');
+      background-position: center;
+      background-size: contain;
+      width: 20px;
+      height: 20px;
+    }
+    .v-toast__text {
+      padding: 4px 12px;
+      max-width: 250px;
+      min-width: 200px;
+      word-wrap: break-word;
+    }
+    &::after {
+      content: '';
+      background-image: url('../icon/x.svg');
+      background-position: center;
+      background-size: contain;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      transition: 0.3s;
+    }
+    &:hover {
+      &::after {
+        opacity: 1;
+      }
+    }
+
+    &.v-toast__item--success {
+      color: $color-success-4;
+      .v-toast__icon {
+        background-image: url('../icon/check-circle.svg');
+      }
+    }
+
+    &.v-toast__item--warning {
+      color: $color-warning-4;
+      .v-toast__icon {
+        background-image: url('../icon/alert-triangle.svg');
+      }
+    }
+
+    &.v-toast__item--error {
+      color: $color-danger-4;
+      .v-toast__icon {
+        background-image: url('../icon/alert-circle.svg');
+      }
+    }
+  }
+}
