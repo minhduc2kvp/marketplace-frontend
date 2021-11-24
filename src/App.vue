@@ -10,27 +10,52 @@
 </template>
 
 <script>
-import ls from '@/common/local-storage';
+import ls from '@/commons/local-storage';
 import i18n from '@/plugins/lang';
 import Layout from '@/views/layout/Layout.vue';
-import { mapState } from 'vuex';
+import loader from '@/components/mixins/loader.js';
+import { mapState, mapActions } from 'vuex';
 import '@/assets/scss/style.scss';
 
 export default {
+  mixins: [loader],
   components: { Layout },
-  created() {
-    // setup language for app
+  computed: {
+    ...mapState({
+      isLoading: (state) => state.app.loading,
+    }),
+  },
+  methods: {
+    ...mapActions('user', ['setAccount', 'setBalance']),
+    ...mapActions('app', ['init']),
+  },
+  async created() {
+    //#region setup language for app
     let language = ls.getLanguage();
     if (!language) {
       language = navigator.language.split('-')[0];
       ls.setLanguage(language);
     }
     i18n.locale = language;
-  },
-  computed: {
-    ...mapState({
-      isLoading: (state) => state.app.loading,
-    }),
+    //#endregion
+
+    //#region get user from localstorage
+    const user = JSON.parse(ls.getUser());
+    if (user) {
+      this.setAccount(user.account);
+      this.setBalance(user.balance);
+    }
+    //#endregion
+
+    //#region init data app
+    this.showLoading();
+    try {
+      await this.init();
+    } catch (error) {
+      console.error('Something went wrong !');
+    }
+    this.closeLoading();
+    //#endregion
   },
 };
 </script>

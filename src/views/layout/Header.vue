@@ -47,10 +47,17 @@
     </Dropdown>
 
     <!-- User action area -->
-    <div class="user-action">
-      <router-link class="login-button" to="/login">
+    <div class="user-section">
+      <router-link v-if="!account" class="login-button" to="/login">
         <img class="button-icon" src="@/assets/icon/login.svg" alt="" />
         <div class="button-text">{{ $t('app.login') }}</div>
+      </router-link>
+      <router-link v-if="account" class="user-profile-button" to="/profile">
+        <img class="button-icon" src="@/assets/icon/user.svg" alt="" />
+        <div :title="account" class="button-text">
+          <div class="text-left">{{ account.slice(0, 40) }}</div>
+          <div class="text-right">{{ account.slice(40) }}</div>
+        </div>
       </router-link>
     </div>
   </div>
@@ -60,7 +67,8 @@
 import Dropdown from 'ant-design-vue/lib/dropdown';
 import Menu from 'ant-design-vue/lib/menu';
 import MenuItem from 'ant-design-vue/lib/menu/MenuItem';
-import ls from '@/common/local-storage';
+import ls from '@/commons/local-storage';
+import { mapState } from 'vuex';
 
 const languageDropdownOptions = [
   {
@@ -98,14 +106,10 @@ export default {
       ],
     };
   },
-  methods: {
-    handleChangeLanguage({ key }) {
-      ls.setLanguage(this.languageDropdownOptions[key].language);
-      this.$router.go();
-    },
-  },
-  created() {},
   computed: {
+    ...mapState({
+      account: (state) => state.user.account,
+    }),
     currentLanguage() {
       const current = this.languageDropdownOptions.find(
         (language) => language.language == ls.getLanguage()
@@ -113,6 +117,13 @@ export default {
       return current;
     },
   },
+  methods: {
+    handleChangeLanguage({ key }) {
+      ls.setLanguage(this.languageDropdownOptions[key].language);
+      this.$router.go();
+    },
+  },
+  created() {},
 };
 </script>
 
@@ -124,7 +135,6 @@ export default {
   margin-left: auto;
   display: flex;
   align-items: center;
-  border-left: 2px solid $color-gray-5;
   border-left: 2px solid $color-gray-5;
   .language {
     color: $color-white;
@@ -211,7 +221,7 @@ export default {
     }
   }
 
-  .user-action {
+  .user-section {
     height: 100%;
     .login-button {
       height: 100%;
@@ -221,10 +231,7 @@ export default {
       background-color: $color-primary-4;
       text-decoration: none;
       &.active {
-        display: none;
-      }
-      &:hover {
-        background-color: $color-primary-3;
+        background-color: $color-gray-3;
       }
       img.button-icon {
         width: 20px;
@@ -234,6 +241,34 @@ export default {
         color: $color-white;
         font-family: $font-regular;
         font-size: 16px;
+      }
+    }
+    .user-profile-button {
+      height: 100%;
+      align-items: center;
+      display: flex;
+      border-left: 2px solid $color-gray-5;
+      padding: 0 16px;
+      &.active {
+        border-color: $color-gray-3;
+        background-color: $color-gray-3;
+      }
+      .button-icon {
+        width: 30px;
+        height: 30px;
+        padding: 5px;
+        border-radius: 50%;
+        border: 2px solid $color-white;
+      }
+      .button-text {
+        margin-left: 12px;
+        display: flex;
+        color: $color-white;
+        .text-left {
+          width: 80px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }

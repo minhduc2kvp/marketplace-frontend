@@ -12,7 +12,9 @@ export default {};
 .button {
   height: 40px;
   width: max-content;
-  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
   border-radius: 4px;
   background-color: $color-primary-4;
   cursor: pointer;
@@ -22,6 +24,15 @@ export default {};
   &:hover {
     background-color: $color-primary-3;
   }
+
+  // button danger
+  &.button-danger {
+    background-color: $color-danger-4;
+    &:hover {
+      background-color: $color-danger-3;
+    }
+  }
+
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */

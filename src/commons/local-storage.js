@@ -1,5 +1,6 @@
 const key = {
   language: 'language',
+  user: 'user',
 };
 
 export default {
@@ -8,5 +9,15 @@ export default {
   },
   getLanguage() {
     return localStorage.getItem(key.language);
+  },
+
+  setUser(value) {
+    localStorage.setItem(key.user, value);
+  },
+  getUser() {
+    return localStorage.getItem(key.user);
+  },
+  logout() {
+    localStorage.removeItem(key.user);
   },
 };

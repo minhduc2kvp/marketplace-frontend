@@ -18,6 +18,14 @@ const routes = [
     name: 'LoginPage',
     component: () => import('@/views/LoginPage'),
   },
+  {
+    path: '/profile',
+    name: 'ProfileUserPage',
+    component: () => import('@/views/Profile'),
+    meta: {
+      auth: true,
+    },
+  },
 ];
 
 export default routes;
