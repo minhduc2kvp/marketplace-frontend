@@ -1,4 +1,4 @@
-# frontend
+# Marketplace Frontend
 
 ## Project setup
 ```
