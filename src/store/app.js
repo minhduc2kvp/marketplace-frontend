@@ -1,22 +1,18 @@
-import TankToken from '@/web3/artifacts/TankToken.json';
-import TankNFT from '@/web3/artifacts/TankNFT.json';
-import TankMarket from '@/web3/artifacts/TankMarket.json';
 import {
-  tankTokenAddress,
-  tankNFTAddress,
-  tankMarketAddress,
-  URL_RPC,
-} from '@/web3/factory-address.js';
-import Web3 from 'web3';
+  getTokenContract,
+  getNFTContract,
+  getMarketContract,
+} from '@/web3/functions.js';
+import ls from '@/commons/local-storage.js';
 
 const app = {
   namespaced: true,
   state: {
     loading: false,
-    contracts: undefined,
     token: undefined,
     nft: undefined,
     market: undefined,
+    owner: undefined,
   },
   getters: {},
   mutations: {
@@ -25,9 +21,6 @@ const app = {
     },
     CLOSE_LOADING(state) {
       state.loading = false;
-    },
-    SET_CONTRACTS(state, contracts) {
-      state.contracts = contracts;
     },
     SET_TOKEN(state, token) {
       state.token = token;
@@ -47,20 +40,13 @@ const app = {
       commit('CLOSE_LOADING');
     },
     async init({ commit }) {
-      const web3 = new Web3(URL_RPC);
-      const tokenContract = new web3.eth.Contract(
-        TankToken.abi,
-        tankTokenAddress
-      );
-      const nftContract = new web3.eth.Contract(TankNFT.abi, tankNFTAddress);
-      const marketContract = new web3.eth.Contract(
-        TankMarket.abi,
-        tankMarketAddress
-      );
-      const token = await tokenContract.methods.symbol().call();
-      const nft = await nftContract.methods.symbol().call();
-      commit('SET_CONTRACTS', { token: tokenContract });
-      commit('SET_TOKEN', { symbol: token });
+      const token = await getTokenContract();
+      const nft = await getNFTContract();
+      const market = await getMarketContract();
+      commit('SET_TOKEN', token);
+      commit('SET_NFT', nft);
+      commit('SET_MARKET', market);
+      ls.setOwner(token.owner);
     },
   },
 };

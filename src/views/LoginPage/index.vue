@@ -1,16 +1,17 @@
 <template>
-  <div id="login-page">
-    <div class="option-container">
-      <Button @click="handleLogin">
-        <img src="@/assets/icon/metamask.svg" alt="" class="icon" />
-        <div class="text">{{ $t('pageLogin.buttonLogin') }}</div>
-      </Button>
+  <Layout>
+    <div id="login-page">
+      <div class="option-container">
+        <Button @click="handleLogin">
+          <img src="@/assets/icon/metamask.svg" alt="" class="icon" />
+          <div class="text">{{ $t('pageLogin.buttonLogin') }}</div>
+        </Button>
+      </div>
     </div>
-  </div>
+  </Layout>
 </template>
 
 <script>
-import Button from '@/components/base/Button.vue';
 import { mapState } from 'vuex';
 import toast from '@/components/mixins/toast.js';
 import loader from '@/components/mixins/loader.js';
@@ -18,9 +19,6 @@ import user from '@/components/mixins/user.js';
 
 export default {
   mixins: [toast, loader, user],
-  components: {
-    Button,
-  },
   computed: {
     ...mapState({
       account: (state) => state.user.account,

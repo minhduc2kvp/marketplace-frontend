@@ -17,7 +17,16 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.auth)) {
     const user = JSON.parse(ls.getUser());
     if (user) {
-      next();
+      const owner = ls.getOwner();
+      if (to.matched.some((record) => record.meta.auth == 1)) {
+        if (user.account.toLowerCase() == owner.toLowerCase()) {
+          next();
+        } else {
+          next({ path: '/403' });
+        }
+      } else {
+        next();
+      }
     } else {
       next({ path: '/login', params: { nextUrl: to.fullPath } });
     }

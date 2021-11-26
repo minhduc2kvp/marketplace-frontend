@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="font-size">
-    <Layout />
+    <router-view />
 
     <!-- Loading -->
     <div v-show="isLoading" id="loader">
@@ -12,14 +12,14 @@
 <script>
 import ls from '@/commons/local-storage';
 import i18n from '@/plugins/lang';
-import Layout from '@/views/layout/Layout.vue';
 import loader from '@/components/mixins/loader.js';
+import user from '@/components/mixins/user.js';
+import toast from '@/components/mixins/toast.js';
 import { mapState, mapActions } from 'vuex';
 import '@/assets/scss/style.scss';
 
 export default {
-  mixins: [loader],
-  components: { Layout },
+  mixins: [loader, user, toast],
   computed: {
     ...mapState({
       isLoading: (state) => state.app.loading,
@@ -44,6 +44,14 @@ export default {
     if (user) {
       this.setAccount(user.account);
       this.setBalance(user.balance);
+    }
+    //#endregion
+
+    //#region check browser does have support metamask
+    if (!window.ethereum) {
+      this.warning('Your browser does not supported MetaMask !');
+    } else {
+      this.listenChangeAccount();
     }
     //#endregion
 

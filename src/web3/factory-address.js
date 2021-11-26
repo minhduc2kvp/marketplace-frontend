@@ -1,5 +1,5 @@
-export const tankTokenAddress = '0xe732D42a4639D12C1cD19BC0E6b02fE226d9f15D';
-export const tankNFTAddress = '0xb3e1b0c9DCCa2119a6D933A92cD6E97bbEfB011a';
-export const tankMarketAddress = '0x64B3b014548B9bb72f605E17FD57B665A1b08710';
+export const tankTokenAddress = '0xAE3DffF4EC144A27927AD01E9A9043b216c8Ab4d';
+export const tankNFTAddress = '0x5547b6fd2Cead382fCe249cdf2b45665A2bb7bD1';
+export const tankMarketAddress = '0xc328C3De553534C6bfd92a46FF48a3DF888Bd5eC';
 
 export const URL_RPC = 'https://data-seed-prebsc-1-s1.binance.org:8545/';

@@ -2,7 +2,7 @@
   <div id="layout">
     <Header />
     <div id="main">
-      <router-view />
+      <slot></slot>
     </div>
   </div>
 </template>

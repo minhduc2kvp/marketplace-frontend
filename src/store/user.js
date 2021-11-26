@@ -3,6 +3,7 @@ const user = {
   state: {
     account: undefined,
     balance: 0,
+    nfts: [],
   },
   getters: {},
   mutations: {
@@ -12,6 +13,9 @@ const user = {
     SET_BALANCE(state, balance) {
       state.balance = balance;
     },
+    SET_NFTs(state, nfts) {
+      state.nfts = nfts;
+    },
   },
   actions: {
     setAccount({ commit }, account) {
@@ -19,6 +23,9 @@ const user = {
     },
     setBalance({ commit }, balance) {
       commit('SET_BALANCE', balance);
+    },
+    setNFTs({ commit }, nfts) {
+      commit('SET_NFTs', nfts);
     },
   },
 };

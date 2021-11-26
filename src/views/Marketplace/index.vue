@@ -1,7 +1,9 @@
 <template>
-  <div id="marketplace">
-    <h1>Marketplace</h1>
-  </div>
+  <Layout>
+    <div id="marketplace">
+      <h1>Marketplace</h1>
+    </div>
+  </Layout>
 </template>
 
 <script>

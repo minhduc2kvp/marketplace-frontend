@@ -1,6 +1,7 @@
 const key = {
   language: 'language',
   user: 'user',
+  owner: 'owner',
 };
 
 export default {
@@ -17,6 +18,14 @@ export default {
   getUser() {
     return localStorage.getItem(key.user);
   },
+
+  setOwner(value) {
+    localStorage.setItem(key.owner, value);
+  },
+  getOwner() {
+    return localStorage.getItem(key.owner);
+  },
+
   logout() {
     localStorage.removeItem(key.user);
   },

@@ -1,0 +1,23 @@
+=========== Schema NFT Item ===========
+{
+    name: {
+        type: String,
+        description: Name of NFT item
+    },
+    description: {
+        type: String,
+        description: Description for NFT item
+    },
+    type: {
+        type: Number,
+        description: Type of NFT item, use enums
+    },
+    image: {
+        type: String,
+        description: URL resources image of item
+    },
+    properties: {
+        type: Object,
+        description: Properties of NFT item
+    }
+} 
