@@ -1,7 +1,7 @@
 const TypeNFT = {
   Tank: 1,
   Bullet: 2,
-  Explosion: 2,
+  Explosion: 3,
 };
 
 const TankLevel = {

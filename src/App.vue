@@ -40,7 +40,7 @@ export default {
     //#endregion
 
     //#region get user from localstorage
-    const user = JSON.parse(ls.getUser());
+    const user = ls.getUser();
     if (user) {
       this.showLoading();
       await this.login();

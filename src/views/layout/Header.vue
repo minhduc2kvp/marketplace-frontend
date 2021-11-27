@@ -49,14 +49,14 @@
     <!-- User action area -->
     <div class="user-section">
       <router-link v-if="!account" class="login-button" to="/login">
-        <img class="button-icon" src="@/assets/icon/login.svg" alt="" />
+        <img class="button-icon" src="@/assets/icon/login.png" alt="" />
         <div class="button-text">{{ $t('app.login') }}</div>
       </router-link>
       <router-link v-if="account" class="user-profile-button" to="/profile">
-        <img class="button-icon" src="@/assets/icon/user.svg" alt="" />
+        <img class="button-icon" src="@/assets/icon/user.png" alt="" />
         <div :title="account" class="button-text">
-          <div class="text-left">{{ account.slice(0, 40) }}</div>
-          <div class="text-right">{{ account.slice(40) }}</div>
+          <div class="text-left">{{ account.slice(0, 38) }}</div>
+          <div class="text-right">{{ account.slice(38) }}</div>
         </div>
       </router-link>
     </div>
@@ -96,12 +96,12 @@ export default {
         {
           path: '/dashboard',
           text: this.$t('nav.dashboard'),
-          icon: require('@/assets/icon/dashboard.svg'),
+          icon: require('@/assets/icon/layout.png'),
         },
         {
           path: '/marketplace',
           text: this.$t('nav.marketplace'),
-          icon: require('@/assets/icon/marketplace.svg'),
+          icon: require('@/assets/icon/shopping-cart.png'),
         },
       ],
     };
@@ -256,9 +256,6 @@ export default {
       .button-icon {
         width: 30px;
         height: 30px;
-        padding: 5px;
-        border-radius: 50%;
-        border: 2px solid $color-white;
       }
       .button-text {
         margin-left: 12px;

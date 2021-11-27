@@ -7,23 +7,22 @@ const user = {
     ...mapState({}),
   },
   methods: {
-    ...mapActions('user', ['setAccount', 'setBalance', 'setNFTs']),
+    ...mapActions('user', ['setAccount', 'setBalance', 'setNFTs', 'reset']),
     /**
      *
      * @param {*} accounts
      */
     async handleAccountChanged(accounts) {
       if (ls.getUser()) {
-        const assets = await getAccountAssets(accounts[0]);
-
+        // rest store
+        this.reset();
         // save to store
         this.setAccount(accounts[0]);
+        // save to localstorage
+        ls.setUser(accounts[0]);
+        const assets = await getAccountAssets(accounts[0]);
         this.setBalance(assets.balance);
         this.setNFTs(assets.nfts);
-
-        // save to localstorage
-        const user = accounts[0];
-        ls.setUser(JSON.stringify(user));
       }
     },
 
@@ -43,16 +42,13 @@ const user = {
         method: 'eth_requestAccounts',
       });
 
-      const assets = await getAccountAssets(accounts[0]);
-
       // save to store
       this.setAccount(accounts[0]);
+      // save to localstorage
+      ls.setUser(accounts[0]);
+      const assets = await getAccountAssets(accounts[0]);
       this.setBalance(assets.balance);
       this.setNFTs(assets.nfts);
-
-      // save to localstorage
-      const user = accounts[0];
-      ls.setUser(JSON.stringify(user));
 
       this.listenChangeAccount();
     },
@@ -62,9 +58,7 @@ const user = {
      */
     logout() {
       // reset store
-      this.setAccount(undefined);
-      this.setBalance(0);
-      this.setNFTs([]);
+      this.reset();
       // reset localstorage
       ls.logout();
       // remove event listener account changed

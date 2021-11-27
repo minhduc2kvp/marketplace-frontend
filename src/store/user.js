@@ -27,6 +27,11 @@ const user = {
     setNFTs({ commit }, nfts) {
       commit('SET_NFTs', nfts);
     },
+    reset({ commit }) {
+      commit('SET_ACCOUNT', undefined);
+      commit('SET_BALANCE', 0);
+      commit('SET_NFTs', []);
+    },
   },
 };
 

@@ -9,16 +9,16 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
-  linkExactActiveClass: 'active',
+  linkActiveClass: 'active',
 });
 
 // Meta handling
 router.beforeEach((to, from, next) => {
   if (to.matched.some((record) => record.meta.auth)) {
-    const user = JSON.parse(ls.getUser());
+    const user = ls.getUser();
     if (user) {
       const owner = ls.getOwner();
-      if (to.matched.some((record) => record.meta.auth == 1)) {
+      if (to.matched.some((record) => record.meta.role == 1)) {
         if (user.toLowerCase() == owner.toLowerCase()) {
           next();
         } else {

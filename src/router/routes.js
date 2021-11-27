@@ -42,8 +42,23 @@ const routes = [
     path: '/profile',
     name: 'ProfileUserPage',
     component: () => import('@/views/Profile'),
+    children: [
+      {
+        path: '',
+        redirect: 'account',
+      },
+      {
+        path: 'account',
+        component: require('@/views/Profile/Account.vue').default,
+      },
+      {
+        path: 'history',
+        component: require('@/views/Profile/History.vue').default,
+      },
+    ],
     meta: {
-      auth: role.User,
+      auth: true,
+      role: role.User,
     },
   },
   {
@@ -69,7 +84,8 @@ const routes = [
       },
     ],
     meta: {
-      auth: role.Admin,
+      auth: true,
+      role: role.Admin,
     },
   },
 ];

@@ -14,6 +14,7 @@ export default {};
   width: max-content;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 16px;
   border-radius: 4px;
   background-color: $color-primary-4;
@@ -27,9 +28,10 @@ export default {};
 
   // button danger
   &.button-danger {
-    background-color: $color-danger-4;
+    background-color: $color-gray-6;
+    color: $color-danger-3;
     &:hover {
-      background-color: $color-danger-3;
+      background-color: $color-black;
     }
   }
 
