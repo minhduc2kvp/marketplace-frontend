@@ -1,13 +1,16 @@
 <template>
-  <div class="input">
+  <div class="range">
     <div v-if="label" class="input-label">{{ label }}</div>
     <div class="input-container">
       <input
+        class="slider"
         @input="input"
-        :placeholder="placeholder"
         v-model="content"
-        :type="type"
+        type="range"
+        :min="min"
+        :max="max"
       />
+      <div class="input-value">{{ content }}</div>
     </div>
     <div v-if="isInvalid && msgInvalid" class="input-message">
       <img src="@/assets/icon/alert-circle.svg" alt="" class="icon-invalid" />
@@ -20,13 +23,10 @@
 export default {
   props: {
     value: undefined,
-    placeholder: String,
+    min: Number,
+    max: Number,
     msgInvalid: String,
     label: String,
-    type: {
-      type: String,
-      default: 'text',
-    },
     isInvalid: {
       type: Boolean,
       default: false,
@@ -47,32 +47,28 @@ export default {
       this.content = this.value;
     },
   },
+  created() {
+    this.content = this.min;
+    this.$emit('input', this.content);
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.input {
+.range {
   width: 300px;
-  font-size: 14px;
-  font-family: $font-regular;
   .input-label {
     margin-bottom: 4px;
   }
   .input-container {
     width: 100%;
-    height: 40px;
-    background-color: $color-gray-4;
-    border-radius: 4px;
-    padding: 0 8px;
-    input {
+    .slider {
       width: 100%;
       height: 100%;
-      border: none;
       background-color: transparent;
-      &:focus {
-        border: none;
-        outline: none;
-      }
+    }
+    .input-value {
+      text-align: center;
     }
   }
   .input-message {

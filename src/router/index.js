@@ -19,7 +19,7 @@ router.beforeEach((to, from, next) => {
     if (user) {
       const owner = ls.getOwner();
       if (to.matched.some((record) => record.meta.auth == 1)) {
-        if (user.account.toLowerCase() == owner.toLowerCase()) {
+        if (user.toLowerCase() == owner.toLowerCase()) {
           next();
         } else {
           next({ path: '/403' });

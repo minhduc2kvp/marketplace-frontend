@@ -21,3 +21,15 @@
         description: Properties of NFT item
     }
 } 
+
+=========== Properties of Tank item ===========
+{
+    level: {
+        type: String,
+        description: Level of Tank
+    },
+    armor: {
+        type: Number,
+        description: Armor of Tank
+    }
+}

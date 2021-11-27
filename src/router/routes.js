@@ -50,6 +50,24 @@ const routes = [
     path: '/admin',
     name: 'AdminPage',
     component: () => import('@/views/Admin'),
+    children: [
+      {
+        path: '',
+        redirect: 'tank',
+      },
+      {
+        path: 'tank',
+        component: require('@/views/Admin/TankForm.vue').default,
+      },
+      {
+        path: 'bullet',
+        component: require('@/views/Admin/BulletForm.vue').default,
+      },
+      {
+        path: 'explosion',
+        component: require('@/views/Admin/BulletForm.vue').default,
+      },
+    ],
     meta: {
       auth: role.Admin,
     },

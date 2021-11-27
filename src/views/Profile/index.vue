@@ -3,6 +3,15 @@
     <div class="user-profile">
       <h1>{{ account }}</h1>
       <h2>{{ getBalance }} {{ tokenSymbol }}</h2>
+      <div class="list-item">
+        <div v-for="(nft, index) in nfts" :key="index" class="item">
+          <div class="name">{{ nft.name }}</div>
+          <div class="description">{{ nft.description }}</div>
+          <div class="level">{{ nft.level }}</div>
+          <div class="armor">{{ nft.armor }}</div>
+          <img :src="nft.image" alt="" />
+        </div>
+      </div>
       <Button @click="handleLogout" style="margin: auto" class="button-danger"
         >Logout</Button
       >
@@ -21,6 +30,7 @@ export default {
     ...mapState({
       account: (state) => state.user.account,
       balance: (state) => state.user.balance,
+      nfts: (state) => state.user.nfts,
       tokenSymbol: (state) => state.app.token?.symbol,
     }),
     getBalance() {

@@ -22,7 +22,7 @@ const user = {
         this.setNFTs(assets.nfts);
 
         // save to localstorage
-        const user = { account: accounts[0], ...assets };
+        const user = accounts[0];
         ls.setUser(JSON.stringify(user));
       }
     },
@@ -51,7 +51,7 @@ const user = {
       this.setNFTs(assets.nfts);
 
       // save to localstorage
-      const user = { account: accounts[0], ...assets };
+      const user = accounts[0];
       ls.setUser(JSON.stringify(user));
 
       this.listenChangeAccount();
@@ -64,6 +64,7 @@ const user = {
       // reset store
       this.setAccount(undefined);
       this.setBalance(0);
+      this.setNFTs([]);
       // reset localstorage
       ls.logout();
       // remove event listener account changed

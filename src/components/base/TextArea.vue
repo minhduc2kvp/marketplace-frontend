@@ -1,15 +1,10 @@
 <template>
-  <div class="input">
-    <div v-if="label" class="input-label">{{ label }}</div>
-    <div class="input-container">
-      <input
-        @input="input"
-        :placeholder="placeholder"
-        v-model="content"
-        :type="type"
-      />
+  <div class="textarea">
+    <div v-if="label" class="textarea-label">{{ label }}</div>
+    <div class="textarea-container">
+      <textarea @input="input" :placeholder="placeholder" v-model="content" />
     </div>
-    <div v-if="isInvalid && msgInvalid" class="input-message">
+    <div v-if="isInvalid && msgInvalid" class="textarea-message">
       <img src="@/assets/icon/alert-circle.svg" alt="" class="icon-invalid" />
       <div class="text-message">{{ msgInvalid }}</div>
     </div>
@@ -23,10 +18,6 @@ export default {
     placeholder: String,
     msgInvalid: String,
     label: String,
-    type: {
-      type: String,
-      default: 'text',
-    },
     isInvalid: {
       type: Boolean,
       default: false,
@@ -51,31 +42,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.input {
+.textarea {
   width: 300px;
   font-size: 14px;
   font-family: $font-regular;
-  .input-label {
+  .textarea-label {
     margin-bottom: 4px;
   }
-  .input-container {
+  .textarea-container {
     width: 100%;
-    height: 40px;
+    height: 100px;
     background-color: $color-gray-4;
     border-radius: 4px;
-    padding: 0 8px;
-    input {
+    padding: 4px 8px;
+    textarea {
       width: 100%;
-      height: 100%;
+      height: 100% !important;
       border: none;
       background-color: transparent;
+      resize: none;
       &:focus {
         border: none;
         outline: none;
       }
     }
   }
-  .input-message {
+  .textarea-message {
     margin-top: 4px;
     font-size: 12px;
     color: $color-danger-4;

@@ -19,7 +19,7 @@
     </div>
 
     <!-- Language option -->
-    <Dropdown :trigger="['click']">
+    <AntDropdown :trigger="['click']">
       <div class="language-selector">
         <img :src="currentLanguage.flagIcon" class="icon-flag" alt="" />
         <div class="language">{{ currentLanguage.locale }}</div>
@@ -44,7 +44,7 @@
           />
         </MenuItem>
       </Menu>
-    </Dropdown>
+    </AntDropdown>
 
     <!-- User action area -->
     <div class="user-section">
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import Dropdown from 'ant-design-vue/lib/dropdown';
+import AntDropdown from 'ant-design-vue/lib/dropdown';
 import Menu from 'ant-design-vue/lib/menu';
 import MenuItem from 'ant-design-vue/lib/menu/MenuItem';
 import ls from '@/commons/local-storage';
@@ -85,7 +85,7 @@ const languageDropdownOptions = [
 
 export default {
   components: {
-    Dropdown,
+    AntDropdown,
     Menu,
     MenuItem,
   },

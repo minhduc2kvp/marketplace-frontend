@@ -42,16 +42,9 @@ export default {
     //#region get user from localstorage
     const user = JSON.parse(ls.getUser());
     if (user) {
-      this.setAccount(user.account);
-      this.setBalance(user.balance);
-    }
-    //#endregion
-
-    //#region check browser does have support metamask
-    if (!window.ethereum) {
-      this.warning('Your browser does not supported MetaMask !');
-    } else {
-      this.listenChangeAccount();
+      this.showLoading();
+      await this.login();
+      this.closeLoading();
     }
     //#endregion
 
@@ -89,9 +82,9 @@ body {
   font-family: $font-regular;
   font-size: 14px;
   letter-spacing: 1px;
+  color: $color-white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   width: 100%;
   height: 100%;
   #loader {
