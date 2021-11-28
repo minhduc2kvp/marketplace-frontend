@@ -39,23 +39,29 @@ export default {
     i18n.locale = language;
     //#endregion
 
-    //#region get user from localstorage
-    const user = ls.getUser();
-    if (user) {
-      this.showLoading();
-      await this.login();
-      this.closeLoading();
-    }
-    //#endregion
-
     //#region init data app
     this.showLoading();
     try {
       await this.init();
     } catch (error) {
-      console.error('Something went wrong !');
+      this.error('Something went wrong');
+      console.log(error);
     }
     this.closeLoading();
+    //#endregion
+
+    //#region get user from localstorage
+    const user = ls.getUser();
+    if (user) {
+      this.showLoading();
+      try {
+        await this.login();
+      } catch (error) {
+        this.error('Something went wrong');
+        console.log(error);
+      }
+      this.closeLoading();
+    }
     //#endregion
   },
 };

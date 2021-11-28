@@ -185,6 +185,7 @@ export default {
 <style lang="scss" scoped>
 #header {
   width: 100%;
+  min-height: 52px;
   height: 52px;
   background-color: $color-gray-6;
   display: flex;

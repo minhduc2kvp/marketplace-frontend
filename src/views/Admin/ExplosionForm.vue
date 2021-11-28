@@ -160,9 +160,8 @@ export default {
       width: 100%;
       display: flex;
       justify-content: space-between;
-      overflow-y: auto;
-      padding-right: 16px;
       .col-content {
+        overflow-y: auto;
         width: 45%;
         .input,
         .textarea,

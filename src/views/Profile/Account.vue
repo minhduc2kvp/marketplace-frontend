@@ -51,26 +51,148 @@
           <div v-for="(tank, index) in getTanks" :key="index" class="tank-item">
             <img :src="tank.image" alt="" class="tank-image" />
             <div class="tank-info">
-              <img
-                :src="
-                  require(`@/assets/icon/level${tank.properties.level}.png`)
-                "
-                alt=""
-                class="tank-level"
-              />
               <div class="tank-name" :title="tank.name">{{ tank.name }}</div>
               <div class="tank-description" :title="tank.description">
                 {{ tank.description }}
               </div>
-              <div class="tank-armor">
-                <img src="@/assets/icon/shield.png" alt="" class="armor-icon" />
-                <div class="armor-value">{{ tank.properties.armor }}</div>
+              <div class="tank-properties">
+                <div class="tank-armor">
+                  <img
+                    src="@/assets/icon/shield.png"
+                    alt=""
+                    class="armor-icon"
+                  />
+                  <div class="armor-value">{{ tank.properties.armor }}</div>
+                </div>
+                <img
+                  :src="
+                    require(`@/assets/icon/level${tank.properties.level}.png`)
+                  "
+                  alt=""
+                  class="tank-level"
+                />
               </div>
+            </div>
+            <div class="action-container">
+              <Button
+                @click="sellItem(tank.tokenId)"
+                class="button-sell button-danger-v2"
+              >
+                Sell
+              </Button>
+              <Button
+                @click="burnItem(tank.tokenId)"
+                class="button-burn button-warning"
+              >
+                Burn
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- List bullet item -->
+      <div v-if="getBullets.length > 0" class="bullet-asset">
+        <div class="asset-title">
+          <img src="@/assets/icon/bullet.png" alt="" class="title-icon" />
+          <div class="title-text">Bullet</div>
+        </div>
+        <div class="list-bullet">
+          <div
+            v-for="(bullet, index) in getBullets"
+            :key="index"
+            class="bullet-item"
+          >
+            <img :src="bullet.image" alt="" class="bullet-image" />
+            <div class="bullet-info">
+              <div class="bullet-name" :title="bullet.name">
+                {{ bullet.name }}
+              </div>
+              <div class="bullet-description" :title="bullet.description">
+                {{ bullet.description }}
+              </div>
+              <div class="bullet-damage">
+                <img
+                  src="@/assets/icon/swords.png"
+                  alt=""
+                  class="damage-icon"
+                />
+                <div class="damage-value">{{ bullet.properties.damage }}</div>
+              </div>
+            </div>
+            <div class="action-container">
+              <Button
+                @click="sellItem(bullet.tokenId)"
+                class="button-sell button-danger-v2"
+              >
+                Sell
+              </Button>
+              <Button
+                @click="burnItem(bullet.tokenId)"
+                class="button-burn button-warning"
+              >
+                Burn
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- List explosion item -->
+      <div v-if="getExplosions.length > 0" class="explosion-asset">
+        <div class="asset-title">
+          <img src="@/assets/icon/explosion.png" alt="" class="title-icon" />
+          <div class="title-text">Explosion</div>
+        </div>
+        <div class="list-explosion">
+          <div
+            v-for="(explosion, index) in getExplosions"
+            :key="index"
+            class="explosion-item"
+          >
+            <img :src="explosion.image" alt="" class="explosion-image" />
+            <div class="explosion-info">
+              <div class="explosion-name" :title="explosion.name">
+                {{ explosion.name }}
+              </div>
+              <div class="explosion-description" :title="explosion.description">
+                {{ explosion.description }}
+              </div>
+            </div>
+            <div class="action-container">
+              <Button
+                @click="sellItem(explosion.tokenId)"
+                class="button-sell button-danger-v2"
+              >
+                Sell
+              </Button>
+              <Button
+                @click="burnItem(explosion.tokenId)"
+                class="button-burn button-warning"
+              >
+                Burn
+              </Button>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Dialog sell item -->
+    <Dialog
+      v-if="isShowDialogSI"
+      @close="closeDialogSI"
+      class="dialog-sell-item"
+    >
+      <template slot="header">Sell item</template>
+      <template slot="content">
+        <Input label="Price" placeholder="Enter price of item" />
+      </template>
+      <template slot="footer">
+        <Button @click="closeDialogSI" class="button-secondary">Cancel</Button>
+        <Button class="button-danger-v2">Sell</Button>
+      </template>
+    </Dialog>
   </div>
 </template>
 
@@ -79,9 +201,17 @@ import { mapState } from 'vuex';
 import { utils } from 'web3';
 import { TypeNFT } from '@/commons/enums.js';
 import toast from '@/components/mixins/toast.js';
+import user from '@/components/mixins/user.js';
+import loader from '@/components/mixins/loader.js';
+import { burnNFT } from '@/web3/functions.js';
 
 export default {
-  mixins: [toast],
+  mixins: [toast, user, loader],
+  data() {
+    return {
+      isShowDialogSI: true,
+    };
+  },
   computed: {
     ...mapState({
       account: (state) => state.user.account,
@@ -107,9 +237,54 @@ export default {
       navigator.clipboard.writeText(this.account);
       this.success('Copy address successfull');
     },
+    closeDialogSI() {
+      this.isShowDialogSI = false;
+    },
+    async sellItem(tokenId) {
+      console.log('sell', tokenId);
+    },
+
+    async burnItem(tokenId) {
+      this.showLoading();
+      try {
+        await burnNFT(tokenId, this.account);
+        await this.loadAssetAccount(this.account);
+        this.success('Burn item success');
+      } catch (error) {
+        console.log(error);
+        this.error('Something went wrong');
+      }
+      this.closeLoading();
+    },
   },
 };
 </script>
+
+<style lang="scss">
+.user-account .dialog-sell-item {
+  .dialog-container {
+    .dialog-header {
+      padding: 8px 16px;
+      font-size: 20px;
+    }
+    .dialog-content {
+      padding: 0 16px;
+      .input {
+        width: 100%;
+      }
+    }
+    .dialog-footer {
+      display: flex;
+      margin-top: 8px;
+      padding: 12px 16px;
+      justify-content: right;
+      .button:nth-child(1) {
+        margin-right: 12px;
+      }
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 .user-account {
@@ -214,6 +389,7 @@ export default {
           width: 400px;
           border-radius: 4px;
           background-color: $color-gray-6;
+          position: relative;
           .tank-image {
             width: 150px;
             min-width: 150px;
@@ -226,16 +402,11 @@ export default {
             flex-grow: 1;
             height: 100%;
             margin-left: 12px;
-            .tank-level {
-              width: 24px;
-              margin-left: auto;
-            }
             .tank-name {
               max-width: 200px;
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
-              margin-top: 8px;
             }
             .tank-description {
               margin-top: 4px;
@@ -245,18 +416,233 @@ export default {
               overflow: hidden;
               text-overflow: ellipsis;
             }
-            .tank-armor {
+            .tank-properties {
               margin-top: auto;
-              margin-bottom: 8px;
               display: flex;
               align-items: center;
-              .armor-icon {
+              justify-content: space-between;
+              .tank-armor {
+                display: flex;
+                align-items: center;
+                .armor-icon {
+                  width: 24px;
+                  margin-right: 4px;
+                }
+                .armor-value {
+                  font-size: 16px;
+                }
+              }
+              .tank-level {
+                width: 24px;
+                margin-left: auto;
+              }
+            }
+          }
+
+          &:hover {
+            .action-container {
+              opacity: 1;
+            }
+          }
+          .action-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            background-color: rgba($color-white, 0.3);
+            display: flex;
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            .button-sell {
+              margin-right: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .bullet-asset {
+      width: 100%;
+      margin-top: 12px;
+      background-color: $color-gray-5;
+      border-radius: 4px;
+      padding: 16px;
+      .asset-title {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        .title-icon {
+          width: 32px;
+          margin-right: 8px;
+        }
+      }
+      .list-bullet {
+        min-width: 100%;
+        width: 500px;
+        overflow-x: auto;
+        margin-top: 8px;
+        display: flex;
+        .bullet-item {
+          margin-right: 16px;
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          min-width: 400px;
+          max-width: 400px;
+          width: 400px;
+          border-radius: 4px;
+          background-color: $color-gray-6;
+          position: relative;
+          .bullet-image {
+            width: 150px;
+            min-width: 150px;
+            max-height: 150px;
+            border-radius: 4px;
+          }
+          .bullet-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+            margin-left: 12px;
+            .bullet-name {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            .bullet-description {
+              margin-top: 4px;
+              font-size: 12px;
+              color: $color-gray-1;
+              max-height: 50px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .bullet-damage {
+              margin-top: auto;
+              display: flex;
+              align-items: center;
+              .damage-icon {
                 width: 24px;
                 margin-right: 4px;
               }
-              .armor-value {
+              .damage-value {
                 font-size: 16px;
               }
+            }
+          }
+
+          &:hover {
+            .action-container {
+              opacity: 1;
+            }
+          }
+          .action-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            background-color: rgba($color-white, 0.3);
+            display: flex;
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            .button-sell {
+              margin-right: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .explosion-asset {
+      width: 100%;
+      margin-top: 12px;
+      background-color: $color-gray-5;
+      border-radius: 4px;
+      padding: 16px;
+      .asset-title {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        .title-icon {
+          width: 32px;
+          margin-right: 8px;
+        }
+      }
+      .list-explosion {
+        min-width: 100%;
+        width: 500px;
+        overflow-x: auto;
+        margin-top: 8px;
+        display: flex;
+        .explosion-item {
+          margin-right: 16px;
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          min-width: 400px;
+          max-width: 400px;
+          width: 400px;
+          border-radius: 4px;
+          background-color: $color-gray-6;
+          position: relative;
+          .explosion-image {
+            width: 150px;
+            min-width: 150px;
+            max-height: 150px;
+            border-radius: 4px;
+          }
+          .explosion-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+            margin-left: 12px;
+            .explosion-name {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            .explosion-description {
+              margin-top: 4px;
+              font-size: 12px;
+              color: $color-gray-1;
+              max-height: 50px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+          }
+
+          &:hover {
+            .action-container {
+              opacity: 1;
+            }
+          }
+          .action-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            background-color: rgba($color-white, 0.3);
+            display: flex;
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            .button-sell {
+              margin-right: 16px;
             }
           }
         }

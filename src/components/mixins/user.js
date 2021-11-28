@@ -8,6 +8,17 @@ const user = {
   },
   methods: {
     ...mapActions('user', ['setAccount', 'setBalance', 'setNFTs', 'reset']),
+
+    /**
+     *
+     * @param {*} account
+     */
+    async loadAssetAccount(account) {
+      const assets = await getAccountAssets(account);
+      this.setBalance(assets.balance);
+      this.setNFTs(assets.nfts);
+    },
+
     /**
      *
      * @param {*} accounts
@@ -20,9 +31,7 @@ const user = {
         this.setAccount(accounts[0]);
         // save to localstorage
         ls.setUser(accounts[0]);
-        const assets = await getAccountAssets(accounts[0]);
-        this.setBalance(assets.balance);
-        this.setNFTs(assets.nfts);
+        await this.loadAssetAccount(accounts[0]);
       }
     },
 
@@ -46,9 +55,7 @@ const user = {
       this.setAccount(accounts[0]);
       // save to localstorage
       ls.setUser(accounts[0]);
-      const assets = await getAccountAssets(accounts[0]);
-      this.setBalance(assets.balance);
-      this.setNFTs(assets.nfts);
+      await this.loadAssetAccount(accounts[0]);
 
       this.listenChangeAccount();
     },

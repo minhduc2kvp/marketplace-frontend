@@ -9,6 +9,11 @@ import {
 } from './factory-address';
 import Web3 from 'web3';
 
+/**
+ *
+ * @param {*} account
+ * @returns
+ */
 const getAccountAssets = async function (account) {
   const web3 = new Web3(window.ethereum);
   const tokenContract = new web3.eth.Contract(TankToken.abi, tankTokenAddress);
@@ -24,7 +29,7 @@ const getAccountAssets = async function (account) {
       .tokenOfOwnerByIndex(account, index)
       .call();
     const tokenURI = await nftContract.methods.tokenURI(tokenId).call();
-    nfts.push(JSON.parse(tokenURI));
+    nfts.push({ tokenId, ...JSON.parse(tokenURI) });
   }
 
   return { balance: tokenBalance, nfts };
@@ -95,10 +100,22 @@ const createNFT = async function (tokenURI, sender) {
   await nftContract.methods.create(tokenURI).send({ from: sender });
 };
 
+/**
+ *
+ * @param {*} tokenId
+ * @param {*} sender
+ */
+const burnNFT = async function (tokenId, sender) {
+  const web3 = new Web3(window.ethereum);
+  const nftContract = new web3.eth.Contract(TankNFT.abi, tankNFTAddress);
+  await nftContract.methods.burn(tokenId).send({ from: sender });
+};
+
 export {
   getAccountAssets,
   getTokenContract,
   getNFTContract,
   getMarketContract,
   createNFT,
+  burnNFT,
 };

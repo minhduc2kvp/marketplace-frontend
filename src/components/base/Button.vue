@@ -10,6 +10,7 @@ export default {};
 
 <style lang="scss" scoped>
 .button {
+  min-width: 100px;
   height: 40px;
   width: max-content;
   display: flex;
@@ -32,6 +33,33 @@ export default {};
     color: $color-danger-3;
     &:hover {
       background-color: $color-black;
+    }
+  }
+
+  // button danger v2
+  &.button-danger-v2 {
+    background-color: $color-danger-4;
+    color: $color-white;
+    &:hover {
+      background-color: $color-danger-3;
+    }
+  }
+
+  // button warning
+  &.button-warning {
+    background-color: $color-warning-4;
+    color: $color-white;
+    &:hover {
+      background-color: $color-warning-3;
+    }
+  }
+
+  // button secondary
+  &.button-secondary {
+    background-color: $color-gray-3;
+    color: $color-white;
+    &:hover {
+      background-color: $color-gray-2;
     }
   }
 

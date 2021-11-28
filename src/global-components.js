@@ -5,6 +5,7 @@ import TextArea from '@/components/base/TextArea.vue';
 import Range from '@/components/base/Range.vue';
 import Dropdown from '@/components/base/Dropdown.vue';
 import UploadArea from '@/components/base/UploadArea.vue';
+import Dialog from '@/components/base/Dialog.vue';
 import Vue from 'vue';
 
 Vue.component('Layout', Layout);
@@ -14,3 +15,4 @@ Vue.component('TextArea', TextArea);
 Vue.component('Range', Range);
 Vue.component('Dropdown', Dropdown);
 Vue.component('UploadArea', UploadArea);
+Vue.component('Dialog', Dialog);
