@@ -80,7 +80,7 @@ const routes = [
       },
       {
         path: 'explosion',
-        component: require('@/views/Admin/BulletForm.vue').default,
+        component: require('@/views/Admin/ExplosionForm.vue').default,
       },
     ],
     meta: {

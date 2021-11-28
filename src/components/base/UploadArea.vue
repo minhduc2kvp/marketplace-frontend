@@ -65,12 +65,14 @@ export default {
 .upload-area {
   width: 300px;
   height: 300px;
+  display: flex;
+  flex-direction: column;
   .upload-label {
     margin-bottom: 4px;
   }
   .upload-container {
     width: 100%;
-    height: 100%;
+    flex-grow: 1;
     cursor: pointer;
     border-radius: 8px;
     border: 2px dashed $color-gray-1;
@@ -89,6 +91,8 @@ export default {
     }
     .image-upload {
       width: 90%;
+      // max-width: 90%;
+      max-height: 90%;
     }
     &:hover {
       border-color: $color-gray-2;

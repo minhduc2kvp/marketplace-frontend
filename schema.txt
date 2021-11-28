@@ -33,3 +33,11 @@
         description: Armor of Tank
     }
 }
+
+=========== Properties of Bullet item ===========
+{
+    damage: {
+        type: Number,
+        description: Damage of Bullet
+    },
+}
