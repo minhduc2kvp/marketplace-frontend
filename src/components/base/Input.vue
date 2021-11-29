@@ -6,6 +6,8 @@
         @input="input"
         :placeholder="placeholder"
         v-model="content"
+        :min="min"
+        :max="max"
         :type="type"
       />
     </div>
@@ -23,6 +25,8 @@ export default {
     placeholder: String,
     msgInvalid: String,
     label: String,
+    min: Number,
+    max: Number,
     type: {
       type: String,
       default: 'text',

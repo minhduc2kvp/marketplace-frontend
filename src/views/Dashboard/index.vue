@@ -1,6 +1,6 @@
 <template>
   <Layout>
-    <div id="dashboard">
+    <div class="dashboard">
       <h1>Dashboard</h1>
     </div>
   </Layout>
@@ -11,7 +11,7 @@ export default {};
 </script>
 
 <style lang="scss" scoped>
-#dashboard {
+.dashboard {
   // height: 1000px;
 }
 </style>

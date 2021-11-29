@@ -75,7 +75,7 @@
             </div>
             <div class="action-container">
               <Button
-                @click="sellItem(tank.tokenId)"
+                @click="sellItem(tank)"
                 class="button-sell button-danger-v2"
               >
                 Sell
@@ -122,7 +122,7 @@
             </div>
             <div class="action-container">
               <Button
-                @click="sellItem(bullet.tokenId)"
+                @click="sellItem(bullet)"
                 class="button-sell button-danger-v2"
               >
                 Sell
@@ -161,7 +161,7 @@
             </div>
             <div class="action-container">
               <Button
-                @click="sellItem(explosion.tokenId)"
+                @click="sellItem(explosion)"
                 class="button-sell button-danger-v2"
               >
                 Sell
@@ -184,13 +184,21 @@
       @close="closeDialogSI"
       class="dialog-sell-item"
     >
-      <template slot="header">Sell item</template>
+      <template slot="header">Sell item {{ itemSelected.name }}</template>
       <template slot="content">
-        <Input label="Price" placeholder="Enter price of item" />
+        <Input
+          label="Price"
+          type="number"
+          v-model="price.value"
+          :isInvalid="price.isInvalid"
+          :msgInvalid="price.msgInvalid"
+          :min="0"
+          placeholder="Enter price of item"
+        />
       </template>
       <template slot="footer">
         <Button @click="closeDialogSI" class="button-secondary">Cancel</Button>
-        <Button class="button-danger-v2">Sell</Button>
+        <Button @click="confirmSell" class="button-danger-v2">Sell</Button>
       </template>
     </Dialog>
   </div>
@@ -203,13 +211,19 @@ import { TypeNFT } from '@/commons/enums.js';
 import toast from '@/components/mixins/toast.js';
 import user from '@/components/mixins/user.js';
 import loader from '@/components/mixins/loader.js';
-import { burnNFT } from '@/web3/functions.js';
+import { burnNFT, sellNFT } from '@/web3/functions.js';
 
 export default {
   mixins: [toast, user, loader],
   data() {
     return {
-      isShowDialogSI: true,
+      isShowDialogSI: false,
+      price: {
+        value: undefined,
+        isInvalid: false,
+        msgInvalid: '',
+      },
+      itemSelected: {},
     };
   },
   computed: {
@@ -240,8 +254,55 @@ export default {
     closeDialogSI() {
       this.isShowDialogSI = false;
     },
-    async sellItem(tokenId) {
-      console.log('sell', tokenId);
+    showDialogSI() {
+      this.isShowDialogSI = true;
+    },
+
+    sellItem(item) {
+      this.itemSelected = item;
+      this.showDialogSI();
+    },
+
+    validatePriceValue() {
+      let valid = true;
+      if (this.price.value == undefined || this.price.value == '') {
+        valid = false;
+        this.price.isInvalid = true;
+        this.price.msgInvalid = "Price can't be empty";
+      } else if (this.price.value <= 0) {
+        valid = false;
+        this.price.isInvalid = true;
+        this.price.msgInvalid = 'Price must be great than 0';
+      } else {
+        this.price.isInvalid = false;
+      }
+      return valid;
+    },
+
+    async confirmSell() {
+      if (this.validatePriceValue()) {
+        this.closeDialogSI();
+        this.showLoading();
+        try {
+          await sellNFT(
+            this.itemSelected.tokenId,
+            this.price.value,
+            this.account
+          );
+          await this.loadAssetAccount(this.account);
+          this.itemSelected = {};
+          this.price = {
+            value: undefined,
+            isInvalid: false,
+            msgInvalid: '',
+          };
+          this.success('Item is on sale');
+        } catch (error) {
+          console.log(error);
+          this.error('Something went wrong');
+        }
+        this.closeLoading();
+      }
     },
 
     async burnItem(tokenId) {
@@ -255,6 +316,14 @@ export default {
         this.error('Something went wrong');
       }
       this.closeLoading();
+    },
+  },
+  watch: {
+    price: {
+      handler() {
+        this.validatePriceValue();
+      },
+      deep: true,
     },
   },
 };
