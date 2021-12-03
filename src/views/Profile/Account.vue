@@ -81,6 +81,7 @@
                 Sell
               </Button>
               <Button
+                v-if="isOwner"
                 @click="burnItem(tank.tokenId)"
                 class="button-burn button-warning"
               >
@@ -128,6 +129,7 @@
                 Sell
               </Button>
               <Button
+                v-if="isOwner"
                 @click="burnItem(bullet.tokenId)"
                 class="button-burn button-warning"
               >
@@ -167,6 +169,7 @@
                 Sell
               </Button>
               <Button
+                v-if="isOwner"
                 @click="burnItem(explosion.tokenId)"
                 class="button-burn button-warning"
               >
@@ -205,7 +208,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import { utils } from 'web3';
 import { TypeNFT } from '@/commons/enums.js';
 import toast from '@/components/mixins/toast.js';
@@ -230,6 +233,7 @@ export default {
     ...mapState({
       account: (state) => state.user.account,
       balance: (state) => state.user.balance,
+      isOwner: (state) => state.user.isOwner,
       nfts: (state) => state.user.nfts,
       symbol: (state) => state.app.token?.symbol,
     }),
@@ -317,6 +321,18 @@ export default {
       }
       this.closeLoading();
     },
+  },
+  async created() {
+    if (this.account) {
+      this.showLoading();
+      try {
+        await this.loadAssetAccount(this.account);
+      } catch (error) {
+        console.log(error);
+        this.error();
+      }
+      this.closeLoading();
+    }
   },
   watch: {
     price: {

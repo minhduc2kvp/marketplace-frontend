@@ -39,6 +39,7 @@ const app = {
     closeLoading({ commit }) {
       commit('CLOSE_LOADING');
     },
+
     async init({ commit }) {
       const token = await getTokenContract();
       const nft = await getNFTContract();

@@ -38,7 +38,7 @@ export default {
       try {
         await this.login();
         // redirect to dashboard
-        this.$router.replace('/dashboard');
+        this.$router.replace('/profile');
       } catch (error) {
         console.error(error);
       } finally {

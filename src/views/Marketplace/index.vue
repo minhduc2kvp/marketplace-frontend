@@ -14,6 +14,9 @@
             <img :src="item.icon" alt="" class="nav-item-icon" />
             <div class="nav-item-text">{{ item.text }}</div>
           </div>
+          <div class="button-refresh" @click="refresh">
+            <img src="@/assets/icon/refresh.png" class="refresh-icon" alt="" />
+          </div>
         </div>
 
         <!-- List items -->
@@ -169,7 +172,7 @@ export default {
     ...mapState({
       marketItems: (state) => state.app?.market?.items,
       symbol: (state) => state.app?.token?.symbol,
-      account: (state) => state.user?.account,
+      account: (state) => state.user.account,
     }),
     getTanks() {
       return this.marketItems?.filter((nft) => nft.data.type == TypeNFT.Tank);
@@ -192,6 +195,10 @@ export default {
       const web3 = new Web3();
       return web3.utils.fromWei(value);
     },
+
+    /**
+     *
+     */
     async buyItem(item) {
       if (!this.account) {
         this.warning('You are not login');
@@ -208,8 +215,22 @@ export default {
       }
       this.closeLoading();
     },
+
+    /**
+     *
+     */
+    async refresh() {
+      this.showLoading();
+      try {
+        await this.init();
+      } catch (error) {
+        console.log(error);
+        this.error('Something went wrong');
+      }
+      this.closeLoading();
+    },
   },
-  created() {
+  async created() {
     this.navItems = [];
     for (const key in TypeNFT) {
       this.navItems.push({
@@ -219,6 +240,9 @@ export default {
       });
     }
     this.navItemSelected = this.navItems[0];
+
+    // load asset
+    await this.refresh();
   },
 };
 </script>
@@ -267,27 +291,44 @@ export default {
         -ms-user-select: none; /* Internet Explorer/Edge */
         user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
       }
+      .button-refresh {
+        cursor: pointer;
+        margin-left: auto;
+        margin-right: 16px;
+        padding: 8px;
+        border-radius: 50%;
+        &:hover {
+          background-color: $color-gray-3;
+        }
+        img.refresh-icon {
+          width: 24px;
+          height: 24px;
+        }
+      }
     }
 
     .list-items {
       padding: 16px;
       overflow-y: auto;
       flex-grow: 1;
+      display: flex;
+      align-items: center;
 
       .list-tank,
       .list-bullet,
       .list-explosion {
         width: 100%;
-        height: 100%;
+        height: max-content;
         max-height: 100%;
-        overflow-y: auto;
+        max-width: 100%;
+        overflow-x: auto;
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        align-content: flex-start;
         flex-wrap: wrap;
       }
 
       .tank-item {
-        margin-right: 16px;
         display: flex;
         padding: 16px;
         min-width: 400px;
@@ -297,8 +338,7 @@ export default {
         border-radius: 4px;
         background-color: $color-gray-6;
         position: relative;
-        margin-top: 8px;
-        margin-bottom: 8px;
+        margin: 8px;
         .tank-image {
           width: 150px;
           min-width: 150px;
@@ -386,7 +426,6 @@ export default {
       }
 
       .bullet-item {
-        margin-right: 16px;
         display: flex;
         padding: 16px;
         min-width: 400px;
@@ -396,8 +435,7 @@ export default {
         border-radius: 4px;
         background-color: $color-gray-6;
         position: relative;
-        margin-top: 8px;
-        margin-bottom: 8px;
+        margin: 8px;
         .bullet-image {
           width: 150px;
           min-width: 150px;
@@ -476,7 +514,6 @@ export default {
       }
 
       .explosion-item {
-        margin-right: 16px;
         display: flex;
         padding: 16px;
         min-width: 400px;
@@ -486,8 +523,7 @@ export default {
         border-radius: 4px;
         background-color: $color-gray-6;
         position: relative;
-        margin-top: 8px;
-        margin-bottom: 8px;
+        margin: 8px;
         .explosion-image {
           width: 150px;
           min-width: 150px;

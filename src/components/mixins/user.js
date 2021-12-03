@@ -7,7 +7,13 @@ const user = {
     ...mapState({}),
   },
   methods: {
-    ...mapActions('user', ['setAccount', 'setBalance', 'setNFTs', 'reset']),
+    ...mapActions('user', [
+      'setAccount',
+      'setBalance',
+      'setNFTs',
+      'setIsOwner',
+      'reset',
+    ]),
 
     /**
      *
@@ -29,6 +35,9 @@ const user = {
         this.reset();
         // save to store
         this.setAccount(accounts[0]);
+        if (ls.getOwner().toLowerCase() == accounts[0].toLowerCase()) {
+          this.setIsOwner(true);
+        }
         // save to localstorage
         ls.setUser(accounts[0]);
         await this.loadAssetAccount(accounts[0]);
@@ -53,6 +62,9 @@ const user = {
 
       // save to store
       this.setAccount(accounts[0]);
+      if (ls.getOwner().toLowerCase() == accounts[0].toLowerCase()) {
+        this.setIsOwner(true);
+      }
       // save to localstorage
       ls.setUser(accounts[0]);
       await this.loadAssetAccount(accounts[0]);

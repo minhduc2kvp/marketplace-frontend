@@ -8,7 +8,7 @@ const toast = {
     warning(message) {
       this.$toast.warning(message, toastOptions);
     },
-    error(message) {
+    error(message = 'Something went wrong') {
       this.$toast.error(message, toastOptions);
     },
   },

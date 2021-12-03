@@ -4,6 +4,7 @@ const user = {
     account: undefined,
     balance: 0,
     nfts: [],
+    isOwner: false,
   },
   getters: {},
   mutations: {
@@ -16,6 +17,9 @@ const user = {
     SET_NFTs(state, nfts) {
       state.nfts = nfts;
     },
+    SET_IS_OWNER(state, isOwner) {
+      state.isOwner = isOwner;
+    },
   },
   actions: {
     setAccount({ commit }, account) {
@@ -27,10 +31,14 @@ const user = {
     setNFTs({ commit }, nfts) {
       commit('SET_NFTs', nfts);
     },
+    setIsOwner({ commit }, isOwner) {
+      commit('SET_IS_OWNER', isOwner);
+    },
     reset({ commit }) {
       commit('SET_ACCOUNT', undefined);
       commit('SET_BALANCE', 0);
       commit('SET_NFTs', []);
+      commit('SET_IS_OWNER', false);
     },
   },
 };
