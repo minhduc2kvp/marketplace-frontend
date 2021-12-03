@@ -49,7 +49,13 @@
         </div>
         <div class="list-tank">
           <div v-for="(tank, index) in getTanks" :key="index" class="tank-item">
-            <img :src="tank.image" alt="" class="tank-image" />
+            <img
+              :src="tank.image"
+              @loadstart="imageIsLoad($event)"
+              @load="imageIsLoaded($event)"
+              alt=""
+              class="tank-image"
+            />
             <div class="tank-info">
               <div class="tank-name" :title="tank.name">{{ tank.name }}</div>
               <div class="tank-description" :title="tank.description">
@@ -104,7 +110,13 @@
             :key="index"
             class="bullet-item"
           >
-            <img :src="bullet.image" alt="" class="bullet-image" />
+            <img
+              :src="bullet.image"
+              @loadstart="imageIsLoad($event)"
+              @load="imageIsLoaded($event)"
+              alt=""
+              class="bullet-image"
+            />
             <div class="bullet-info">
               <div class="bullet-name" :title="bullet.name">
                 {{ bullet.name }}
@@ -152,7 +164,13 @@
             :key="index"
             class="explosion-item"
           >
-            <img :src="explosion.image" alt="" class="explosion-image" />
+            <img
+              :src="explosion.image"
+              @loadstart="imageIsLoad($event)"
+              @load="imageIsLoaded($event)"
+              alt=""
+              class="explosion-image"
+            />
             <div class="explosion-info">
               <div class="explosion-name" :title="explosion.name">
                 {{ explosion.name }}
@@ -204,6 +222,8 @@
         <Button @click="confirmSell" class="button-danger-v2">Sell</Button>
       </template>
     </Dialog>
+
+    <SellPopup />
   </div>
 </template>
 
@@ -215,9 +235,11 @@ import toast from '@/components/mixins/toast.js';
 import user from '@/components/mixins/user.js';
 import loader from '@/components/mixins/loader.js';
 import { burnNFT, sellNFT } from '@/web3/functions.js';
+import SellPopup from './SellPopup.vue';
 
 export default {
   mixins: [toast, user, loader],
+  components: { SellPopup },
   data() {
     return {
       isShowDialogSI: false,
@@ -320,6 +342,16 @@ export default {
         this.error('Something went wrong');
       }
       this.closeLoading();
+    },
+
+    /**
+     * Show and hide loading image
+     */
+    imageIsLoad(event) {
+      event.target.classList.add('on-load');
+    },
+    imageIsLoaded(event) {
+      event.target.classList.remove('on-load');
     },
   },
   async created() {
@@ -464,6 +496,7 @@ export default {
         overflow-x: auto;
         margin-top: 8px;
         display: flex;
+        padding: 8px 0;
         .tank-item {
           margin-right: 16px;
           display: flex;
@@ -480,6 +513,13 @@ export default {
             min-width: 150px;
             max-height: 150px;
             border-radius: 4px;
+            &.on-load {
+              height: 150px;
+              background-image: url('../../assets/icon/spinner.gif');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 64px;
+            }
           }
           .tank-info {
             display: flex;
@@ -571,6 +611,7 @@ export default {
         overflow-x: auto;
         margin-top: 8px;
         display: flex;
+        padding: 8px 0;
         .bullet-item {
           margin-right: 16px;
           display: flex;
@@ -587,6 +628,13 @@ export default {
             min-width: 150px;
             max-height: 150px;
             border-radius: 4px;
+            &.on-load {
+              height: 150px;
+              background-image: url('../../assets/icon/spinner.gif');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 64px;
+            }
           }
           .bullet-info {
             display: flex;
@@ -669,6 +717,7 @@ export default {
         overflow-x: auto;
         margin-top: 8px;
         display: flex;
+        padding: 8px 0;
         .explosion-item {
           margin-right: 16px;
           display: flex;
@@ -685,6 +734,13 @@ export default {
             min-width: 150px;
             max-height: 150px;
             border-radius: 4px;
+            &.on-load {
+              height: 150px;
+              background-image: url('../../assets/icon/spinner.gif');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 64px;
+            }
           }
           .explosion-info {
             display: flex;

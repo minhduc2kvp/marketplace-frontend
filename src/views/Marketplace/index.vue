@@ -28,7 +28,13 @@
               :key="index"
               class="tank-item"
             >
-              <img :src="tank.data.image" alt="" class="tank-image" />
+              <img
+                :src="tank.data.image"
+                @loadstart="imageIsLoad($event)"
+                @load="imageIsLoaded($event)"
+                alt=""
+                class="tank-image"
+              />
               <div class="tank-info">
                 <div class="tank-name" :title="tank.data.name">
                   {{ tank.data.name }}
@@ -77,7 +83,13 @@
               :key="index"
               class="bullet-item"
             >
-              <img :src="bullet.data.image" alt="" class="bullet-image" />
+              <img
+                :src="bullet.data.image"
+                @loadstart="imageIsLoad($event)"
+                @load="imageIsLoaded($event)"
+                alt=""
+                class="bullet-image"
+              />
               <div class="bullet-info">
                 <div class="bullet-name" :title="bullet.data.name">
                   {{ bullet.data.name }}
@@ -120,7 +132,13 @@
               :key="index"
               class="explosion-item"
             >
-              <img :src="explosion.data.image" alt="" class="explosion-image" />
+              <img
+                :src="explosion.data.image"
+                @loadstart="imageIsLoad($event)"
+                @load="imageIsLoaded($event)"
+                alt=""
+                class="explosion-image"
+              />
               <div class="explosion-info">
                 <div class="explosion-name" :title="explosion.data.name">
                   {{ explosion.data.name }}
@@ -228,6 +246,16 @@ export default {
         this.error('Something went wrong');
       }
       this.closeLoading();
+    },
+
+    /**
+     * Show and hide loading image
+     */
+    imageIsLoad(event) {
+      event.target.classList.add('on-load');
+    },
+    imageIsLoaded(event) {
+      event.target.classList.remove('on-load');
     },
   },
   async created() {
@@ -344,6 +372,13 @@ export default {
           min-width: 150px;
           max-height: 150px;
           border-radius: 4px;
+          &.on-load {
+            height: 150px;
+            background-image: url('../../assets/icon/spinner.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 64px;
+          }
         }
         .tank-info {
           display: flex;
@@ -441,6 +476,13 @@ export default {
           min-width: 150px;
           max-height: 150px;
           border-radius: 4px;
+          &.on-load {
+            height: 150px;
+            background-image: url('../../assets/icon/spinner.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 64px;
+          }
         }
         .bullet-info {
           display: flex;
@@ -529,6 +571,13 @@ export default {
           min-width: 150px;
           max-height: 150px;
           border-radius: 4px;
+          &.on-load {
+            height: 150px;
+            background-image: url('../../assets/icon/spinner.gif');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 64px;
+          }
         }
         .explosion-info {
           display: flex;

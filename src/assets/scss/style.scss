@@ -1,6 +1,6 @@
 .v-toast {
   .v-toast__item {
-    background-color: $color-gray-5;
+    background-color: $color-primary-4;
     font-family: $font-regular;
     font-size: 14px;
     color: $color-white;
@@ -41,21 +41,21 @@
     }
 
     &.v-toast__item--success {
-      color: $color-success-4;
+      background-color: $color-success-4;
       .v-toast__icon {
-        background-image: url('../icon/check-circle.svg');
+        background-image: url('../icon/check.svg');
       }
     }
 
     &.v-toast__item--warning {
-      color: $color-warning-4;
+      background-color: $color-warning-4;
       .v-toast__icon {
         background-image: url('../icon/alert-triangle.svg');
       }
     }
 
     &.v-toast__item--error {
-      color: $color-danger-4;
+      background-color: $color-danger-4;
       .v-toast__icon {
         background-image: url('../icon/alert-circle.svg');
       }

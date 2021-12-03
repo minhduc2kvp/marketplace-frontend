@@ -194,7 +194,7 @@ export default {
     margin-left: 16px;
     margin-right: 16px;
     img {
-      height: 40px;
+      height: 36px;
     }
   }
 

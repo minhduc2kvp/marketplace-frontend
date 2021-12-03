@@ -14,6 +14,10 @@ const router = new VueRouter({
 
 // Meta handling
 router.beforeEach((to, from, next) => {
+  Vue.nextTick(() => {
+    document.title = 'Marketplace';
+  });
+
   if (to.matched.some((record) => record.meta.auth)) {
     const user = ls.getUser();
     if (user) {
