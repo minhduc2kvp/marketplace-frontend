@@ -191,6 +191,28 @@ const sellNFT = async function (tokenId, price, sender) {
     .send({ from: sender });
 };
 
+/**
+ *
+ * @param {*} itemId
+ * @param {*} sender
+ */
+const buyNFT = async function (itemId, price, sender) {
+  const web3 = new Web3(window.ethereum);
+  const tokenContract = new web3.eth.Contract(TankToken.abi, tankTokenAddress);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  // approve pay price of item
+  await tokenContract.methods
+    .approve(marketContract._address, price)
+    .send({ from: sender });
+
+  // buy nft
+  await marketContract.methods.sellMarketItem(itemId).send({ from: sender });
+};
+
 export {
   getAccountAssets,
   getTokenContract,
@@ -199,4 +221,5 @@ export {
   createNFT,
   burnNFT,
   sellNFT,
+  buyNFT,
 };

@@ -63,6 +63,15 @@ export default {};
     }
   }
 
+  // button success
+  &.button-success {
+    background-color: $color-success-4;
+    color: $color-white;
+    &:hover {
+      background-color: $color-success-3;
+    }
+  }
+
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
