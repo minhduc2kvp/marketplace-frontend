@@ -7,58 +7,89 @@
         alt=""
         class="icon-close"
       />
-      <div class="popup-header">Sell item <span>Tank#001</span></div>
+      <div class="popup-header">
+        On sell item <span>{{ item.name }}</span>
+      </div>
       <div class="popup-content">
         <a-steps :current="current">
-          <a-step v-for="item in steps" :key="item.title" :title="item.title" />
+          <a-step v-for="step in steps" :key="step.title" :title="step.title" />
         </a-steps>
         <div class="steps-content">
           <div v-if="current == 0" class="step-1">
             <img src="@/assets/icon/coin.png" alt="" class="icon-coin" />
             <div class="text-content">
-              <div class="notice-text">
-                You need to pay fee to list item on market
+              <div class="notice">
+                <img
+                  src="@/assets/icon/information.png"
+                  alt=""
+                  class="notice-icon"
+                />
+                <div class="notice-text">Pay fee to list item on market</div>
               </div>
               <div class="fee-value">Fee <span>17 TANK</span></div>
               <Button>Pay</Button>
             </div>
           </div>
-          <div v-if="current == 1" class="step-2">Step 2</div>
-          <div v-if="current == 2" class="step-3">
-            <Input
-              label="Price"
-              type="number"
-              v-model="price.value"
-              :isInvalid="price.isInvalid"
-              :msgInvalid="price.msgInvalid"
-              :min="0"
-              placeholder="Enter price of item"
-            />
+          <div v-if="current == 1" class="step-2">
+            <img :src="item.image" alt="" class="item-image" />
+            <div class="content">
+              <div class="notice">
+                <img
+                  src="@/assets/icon/passport.png"
+                  alt=""
+                  class="notice-icon"
+                />
+                <div class="notice-text">
+                  Approve market to tranfer <span>{{ item.name }}</span> on
+                  market
+                </div>
+              </div>
+              <Button class="button-warning">Approve</Button>
+            </div>
           </div>
-          <div v-if="current == 3" class="step-4">Step 4</div>
-        </div>
-        <div class="steps-action">
-          <a-button
-            v-if="current < steps.length - 1"
-            type="primary"
-            @click="next"
-          >
-            Next
-          </a-button>
-          <a-button
-            v-if="current == steps.length - 1"
-            type="primary"
-            @click="$message.success('Processing complete!')"
-          >
-            Done
-          </a-button>
-          <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
-            Previous
-          </a-button>
+          <div v-if="current == 2" class="step-3">
+            <img src="@/assets/icon/tag.png" alt="" class="icon-price" />
+            <div class="content">
+              <div class="content-title">
+                <img src="@/assets/icon/salary.png" alt="" class="title-icon" />
+                <div class="title-text">Set price of item</div>
+              </div>
+              <div class="input-group">
+                <Input
+                  type="number"
+                  v-model="price.value"
+                  :isInvalid="price.isInvalid"
+                  :msgInvalid="price.msgInvalid"
+                  :min="0"
+                  placeholder="Enter price of item"
+                  class="input-secondary"
+                />
+                <div class="symboy">TANK</div>
+              </div>
+              <Button>Next</Button>
+            </div>
+          </div>
+          <div v-if="current == 3" class="step-4">
+            <img
+              src="@/assets/icon/marketplace.png"
+              alt=""
+              class="icon-marketplace"
+            />
+            <div class="content">
+              <div class="content-title">
+                Sell item <span class="item-name">{{ item.name }}</span> for
+                <span class="item-price">{{ price.value }} TANK</span>
+              </div>
+              <div class="action-group">
+                <Button class="button-secondary">Back</Button>
+                <Button>Confirm</Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="popup-footer">
-        <slot name="footer"></slot>
+        <Button class="button-secondary">Close</Button>
       </div>
     </div>
   </div>
@@ -155,7 +186,7 @@ export default {
       margin-left: auto;
       cursor: pointer;
       &:hover {
-        background-color: $color-gray-1;
+        background-color: rgba($color-gray-1, 0.5);
       }
       z-index: 1;
     }
@@ -163,6 +194,9 @@ export default {
       margin-top: -32px;
       padding: 16px;
       font-size: 20px;
+      span {
+        font-family: $font-bold;
+      }
     }
     .popup-content {
       width: 800px;
@@ -180,6 +214,9 @@ export default {
         height: 300px;
         display: flex;
         align-items: center;
+        background-color: rgba($color-gray-1, 0.1);
+        border-radius: 8px;
+        margin-top: 16px;
         .step-1 {
           display: flex;
           .icon-coin {
@@ -191,10 +228,18 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            .notice-text {
-              font-size: 24px;
-              color: $color-warning-4;
-              text-decoration: underline;
+            .notice {
+              display: flex;
+              align-items: center;
+              .notice-icon {
+                width: 32px;
+                height: 32px;
+                margin-right: 16px;
+              }
+              .notice-text {
+                font-size: 24px;
+                color: $color-primary-4;
+              }
             }
             .fee-value {
               font-size: 32px;
@@ -206,11 +251,106 @@ export default {
             }
           }
         }
+        .step-2 {
+          display: flex;
+          .item-image {
+            width: 192px;
+            margin: 0 32px;
+          }
+          .content {
+            display: flex;
+            flex-direction: column;
+            .notice {
+              display: flex;
+              align-items: center;
+              .notice-icon {
+                width: 64px;
+                margin-right: 32px;
+              }
+              .notice-text {
+                font-size: 24px;
+                color: $color-warning-4;
+                padding-right: 32px;
+                span {
+                  font-family: $font-bold;
+                }
+              }
+            }
+            .button {
+              margin-top: auto;
+            }
+          }
+        }
+        .step-3 {
+          display: flex;
+          .icon-price {
+            width: 192px;
+            margin: 0 32px;
+          }
+          .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            .content-title {
+              display: flex;
+              align-items: center;
+              .title-icon {
+                width: 36px;
+                margin-right: 16px;
+              }
+              .title-text {
+                color: $color-primary-4;
+                font-size: 24px;
+              }
+            }
+            .input-group {
+              display: flex;
+              align-items: center;
+              .symboy {
+                margin-left: 16px;
+                font-size: 32px;
+                color: $color-warning-4;
+              }
+            }
+          }
+        }
+        .step-4 {
+          display: flex;
+          .icon-marketplace {
+            width: 192px;
+            margin: 0 32px;
+          }
+          .content {
+            display: flex;
+            flex-direction: column;
+            .content-title {
+              font-size: 42px;
+              color: $color-primary-4;
+              .item-name {
+                font-family: $font-bold;
+              }
+              .item-price {
+                color: $color-warning-4;
+              }
+            }
+            .action-group {
+              margin-top: auto;
+              display: flex;
+              align-items: center;
+              .button-secondary {
+                margin-right: 16px;
+              }
+            }
+          }
+        }
       }
     }
     .popup-footer {
       padding: 16px;
       margin-top: auto;
+      .button {
+        margin-left: auto;
+      }
     }
   }
 }

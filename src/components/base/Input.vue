@@ -12,7 +12,11 @@
       />
     </div>
     <div v-if="isInvalid && msgInvalid" class="input-message">
-      <img src="@/assets/icon/alert-circle.svg" alt="" class="icon-invalid" />
+      <img
+        src="@/assets/icon/alert-circle-danger.svg"
+        alt=""
+        class="icon-invalid"
+      />
       <div class="text-message">{{ msgInvalid }}</div>
     </div>
   </div>
@@ -88,6 +92,12 @@ export default {
     .icon-invalid {
       width: 16px;
       margin-right: 4px;
+    }
+  }
+
+  &.input-secondary {
+    .input-container {
+      background-color: rgba($color-gray-1, 0.5);
     }
   }
 }

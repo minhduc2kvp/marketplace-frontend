@@ -223,7 +223,7 @@
       </template>
     </Dialog>
 
-    <SellPopup />
+    <SellPopup :item="getTanks[0]" />
   </div>
 </template>
 
