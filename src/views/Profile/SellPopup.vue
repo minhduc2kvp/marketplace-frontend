@@ -2,8 +2,8 @@
   <div class="sell-popup" @keydown.esc="$emit('close')">
     <div class="popup-container">
       <img
-        src="@/assets/icon/x-black.svg"
-        @click="$emit('close')"
+        src="@/assets/icon/x.svg"
+        @click="closePopup"
         alt=""
         class="icon-close"
       />
@@ -26,10 +26,13 @@
                 />
                 <div class="notice-text">Pay fee to list item on market</div>
               </div>
-              <div class="fee-value">Fee <span>17 TANK</span></div>
-              <Button>Pay</Button>
+              <div class="fee-value">
+                Fee <span>{{ getListingCost }} {{ symbol }}</span>
+              </div>
+              <Button @click="pay">Pay</Button>
             </div>
           </div>
+
           <div v-if="current == 1" class="step-2">
             <img :src="item.image" alt="" class="item-image" />
             <div class="content">
@@ -44,9 +47,10 @@
                   market
                 </div>
               </div>
-              <Button class="button-warning">Approve</Button>
+              <Button class="button-warning" @click="approve">Approve</Button>
             </div>
           </div>
+
           <div v-if="current == 2" class="step-3">
             <img src="@/assets/icon/tag.png" alt="" class="icon-price" />
             <div class="content">
@@ -64,11 +68,12 @@
                   placeholder="Enter price of item"
                   class="input-secondary"
                 />
-                <div class="symboy">TANK</div>
+                <div class="symboy">{{ symbol }}</div>
               </div>
-              <Button>Next</Button>
+              <Button @click="confirmPrice">Next</Button>
             </div>
           </div>
+
           <div v-if="current == 3" class="step-4">
             <img
               src="@/assets/icon/marketplace.png"
@@ -78,28 +83,49 @@
             <div class="content">
               <div class="content-title">
                 Sell item <span class="item-name">{{ item.name }}</span> for
-                <span class="item-price">{{ price.value }} TANK</span>
+                <span class="item-price">{{ price.value }} {{ symbol }}</span>
               </div>
               <div class="action-group">
-                <Button class="button-secondary">Back</Button>
-                <Button>Confirm</Button>
+                <Button @click="back" class="button-secondary">Back</Button>
+                <Button @click="onSell">On Sell</Button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="popup-footer">
-        <Button class="button-secondary">Close</Button>
+        <Button class="button-secondary" @click="closePopup">Close</Button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { utils } from 'web3';
+import toast from '@/components/mixins/toast.js';
+import loader from '@/components/mixins/loader.js';
+import { payListingCost, approveNFT, onSellNFT } from '@/web3/functions.js';
+
 export default {
-  components: {},
+  mixins: [toast, loader],
   props: {
     item: Object,
+  },
+  computed: {
+    ...mapState({
+      account: (state) => state.user.account,
+      balance: (state) => state.user.balance,
+      isOwner: (state) => state.user.isOwner,
+      listingCost: (state) => state.app.market?.listingCost,
+      symbol: (state) => state.app.token?.symbol,
+    }),
+    getListingCost() {
+      if (this.listingCost) {
+        return utils.fromWei(this.listingCost);
+      }
+      return 0;
+    },
   },
   data() {
     return {
@@ -129,7 +155,7 @@ export default {
     next() {
       this.current++;
     },
-    prev() {
+    back() {
       this.current--;
     },
     validatePriceValue() {
@@ -146,6 +172,65 @@ export default {
         this.price.isInvalid = false;
       }
       return valid;
+    },
+    closePopup() {
+      this.$emit('close');
+    },
+
+    /**
+     * Pay listing cost
+     */
+    async pay() {
+      this.showLoading();
+      try {
+        await payListingCost(this.account);
+        this.next();
+        this.success('Pay fee success');
+      } catch (error) {
+        console.log(error);
+        this.error('Pay fee failed');
+      }
+      this.closeLoading();
+    },
+
+    /**
+     * Approve nft for market
+     */
+    async approve() {
+      this.showLoading();
+      try {
+        await approveNFT(this.item.tokenId, this.account);
+        this.next();
+        this.success('Approve item success');
+      } catch (error) {
+        console.log(error);
+        this.error('Approve item failed');
+      }
+      this.closeLoading();
+    },
+
+    /**
+     * Confirm price
+     */
+    confirmPrice() {
+      if (this.validatePriceValue()) {
+        this.next();
+      }
+    },
+
+    /**
+     * On sell item
+     */
+    async onSell() {
+      this.showLoading();
+      try {
+        await onSellNFT(this.item.tokenId, this.price.value, this.account);
+        this.$emit('success');
+      } catch (error) {
+        console.log(error);
+        this.error('On sell item failed');
+      }
+      this.closeLoading();
     },
   },
   watch: {
@@ -172,9 +257,9 @@ export default {
   justify-content: center;
   z-index: 10;
   .popup-container {
-    color: $color-black;
+    color: $color-white;
     min-width: 400px;
-    background-color: $color-white;
+    background-color: $color-gray-5;
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -186,7 +271,7 @@ export default {
       margin-left: auto;
       cursor: pointer;
       &:hover {
-        background-color: rgba($color-gray-1, 0.5);
+        background-color: $color-gray-2;
       }
       z-index: 1;
     }
@@ -201,20 +286,69 @@ export default {
     .popup-content {
       width: 800px;
       margin: 0 16px;
-      background-color: $color-white;
       border-radius: 4px;
       .ant-steps {
         .ant-steps-item {
-          .ant-steps-item-container {
+          &.ant-steps-item-process {
+            .ant-steps-item-container {
+              .ant-steps-item-icon {
+              }
+              .ant-steps-item-content {
+                .ant-steps-item-title {
+                  color: $color-primary-4;
+                  &::after {
+                    background-color: $color-primary-4;
+                  }
+                }
+              }
+            }
+          }
+
+          &.ant-steps-item-finish {
+            .ant-steps-item-container {
+              .ant-steps-item-icon {
+                background-color: $color-success-4;
+                border-color: $color-success-4;
+                .ant-steps-icon {
+                  color: $color-white;
+                }
+              }
+              .ant-steps-item-content {
+                .ant-steps-item-title {
+                  color: $color-success-4;
+                  &::after {
+                    background-color: $color-success-4;
+                  }
+                }
+              }
+            }
+          }
+
+          &.ant-steps-item-wait {
+            .ant-steps-item-container {
+              .ant-steps-item-icon {
+                background-color: transparent;
+                border-color: $color-white;
+                .ant-steps-icon {
+                  color: $color-white;
+                }
+              }
+              .ant-steps-item-content {
+                .ant-steps-item-title {
+                  color: $color-white;
+                }
+              }
+            }
           }
         }
       }
       .steps-content {
-        color: $color-black;
+        color: $color-white;
         height: 300px;
         display: flex;
         align-items: center;
-        background-color: rgba($color-gray-1, 0.1);
+        background-color: $color-gray-4;
+        // background-color: rgba($color-gray-1, 0.1);
         border-radius: 8px;
         margin-top: 16px;
         .step-1 {

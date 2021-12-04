@@ -55,6 +55,11 @@ export default {
       this.content = this.value;
     },
   },
+  created() {
+    if (this.value) {
+      this.content = this.value;
+    }
+  },
 };
 </script>
 
@@ -97,7 +102,7 @@ export default {
 
   &.input-secondary {
     .input-container {
-      background-color: rgba($color-gray-1, 0.5);
+      background-color: $color-gray-3;
     }
   }
 }

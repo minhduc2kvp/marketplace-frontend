@@ -213,6 +213,65 @@ const buyNFT = async function (itemId, price, sender) {
   await marketContract.methods.sellMarketItem(itemId).send({ from: sender });
 };
 
+/**
+ *
+ * @param {*} sender
+ */
+const payListingCost = async function (sender) {
+  const web3 = new Web3(window.ethereum);
+  const tokenContract = new web3.eth.Contract(TankToken.abi, tankTokenAddress);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  // get listing cost
+  const listingCost = await marketContract.methods.getListingCost().call();
+
+  // approve pay fee listing
+  await tokenContract.methods
+    .approve(marketContract._address, listingCost)
+    .send({ from: sender });
+};
+
+/**
+ *
+ * @param {*} tokenId
+ * @param {*} sender
+ */
+const approveNFT = async function (tokenId, sender) {
+  const web3 = new Web3(window.ethereum);
+  const nftContract = new web3.eth.Contract(TankNFT.abi, tankNFTAddress);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  // approve transform nft token
+  await nftContract.methods
+    .approve(marketContract._address, tokenId)
+    .send({ from: sender });
+};
+
+/**
+ *
+ * @param {*} tokenId
+ * @param {*} price
+ * @param {*} sender
+ */
+const onSellNFT = async function (tokenId, price, sender) {
+  const web3 = new Web3(window.ethereum);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  // on sell nft
+  await marketContract.methods
+    .createMarketItem(tokenId, web3.utils.toWei(price))
+    .send({ from: sender });
+};
+
 export {
   getAccountAssets,
   getTokenContract,
@@ -222,4 +281,7 @@ export {
   burnNFT,
   sellNFT,
   buyNFT,
+  payListingCost,
+  approveNFT,
+  onSellNFT,
 };

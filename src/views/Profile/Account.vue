@@ -200,7 +200,7 @@
     </div>
 
     <!-- Dialog sell item -->
-    <Dialog
+    <!-- <Dialog
       v-if="isShowDialogSI"
       @close="closeDialogSI"
       class="dialog-sell-item"
@@ -221,9 +221,15 @@
         <Button @click="closeDialogSI" class="button-secondary">Cancel</Button>
         <Button @click="confirmSell" class="button-danger-v2">Sell</Button>
       </template>
-    </Dialog>
+    </Dialog> -->
 
-    <SellPopup :item="getTanks[0]" />
+    <!-- Popup sell item -->
+    <SellPopup
+      v-if="isShowDialogSI"
+      @close="closeDialogSI"
+      @success="onSellSuccess"
+      :item="itemSelected"
+    />
   </div>
 </template>
 
@@ -334,9 +340,23 @@ export default {
     async burnItem(tokenId) {
       this.showLoading();
       try {
-        await burnNFT(tokenId, this.account);
+        await burnNFT('7', this.account);
         await this.loadAssetAccount(this.account);
         this.success('Burn item success');
+      } catch (error) {
+        console.log(error);
+        this.error('Something went wrong');
+      }
+      this.closeLoading();
+    },
+
+    async onSellSuccess() {
+      this.closeDialogSI();
+      this.showLoading();
+      try {
+        await this.loadAssetAccount(this.account);
+        this.itemSelected = {};
+        this.success('On sell success');
       } catch (error) {
         console.log(error);
         this.error('Something went wrong');
