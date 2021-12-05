@@ -311,6 +311,9 @@ export default {
       return valid;
     },
 
+    /**
+     *
+     */
     async confirmSell() {
       if (this.validatePriceValue()) {
         this.closeDialogSI();
@@ -337,10 +340,13 @@ export default {
       }
     },
 
+    /**
+     *
+     */
     async burnItem(tokenId) {
       this.showLoading();
       try {
-        await burnNFT('7', this.account);
+        await burnNFT(tokenId, this.account);
         await this.loadAssetAccount(this.account);
         this.success('Burn item success');
       } catch (error) {
@@ -350,9 +356,11 @@ export default {
       this.closeLoading();
     },
 
+    /**
+     * Reload item when on sell item success
+     */
     async onSellSuccess() {
       this.closeDialogSI();
-      this.showLoading();
       try {
         await this.loadAssetAccount(this.account);
         this.itemSelected = {};

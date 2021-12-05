@@ -1,5 +1,5 @@
 <template>
-  <div class="sell-popup" @keydown.esc="$emit('close')">
+  <div class="buy-popup" @keydown.esc="$emit('close')">
     <div class="popup-container">
       <img
         src="@/assets/icon/x.svg"
@@ -8,7 +8,7 @@
         class="icon-close"
       />
       <div class="popup-header">
-        On sell item <span>{{ item.name }}</span>
+        Buy item <span>{{ item.data.name }}</span>
       </div>
       <div class="popup-content">
         <a-steps :current="current">
@@ -20,75 +20,37 @@
             <div class="text-content">
               <div class="notice">
                 <img
-                  src="@/assets/icon/information.png"
-                  alt=""
-                  class="notice-icon"
-                />
-                <div class="notice-text">Pay fee to list item on market</div>
-              </div>
-              <div class="fee-value">
-                Fee <span>{{ getListingCost }} {{ symbol }}</span>
-              </div>
-              <Button @click="pay">Pay</Button>
-            </div>
-          </div>
-
-          <div v-if="current == 1" class="step-2">
-            <img :src="item.image" alt="" class="item-image" />
-            <div class="content">
-              <div class="notice">
-                <img
                   src="@/assets/icon/passport.png"
                   alt=""
                   class="notice-icon"
                 />
                 <div class="notice-text">
-                  Approve market to tranfer <span>{{ item.name }}</span> on
-                  market
+                  Approve market to tranfer to seller
                 </div>
+              </div>
+              <div class="price-value">
+                Price <span>{{ getPrice }} {{ symbol }}</span>
               </div>
               <Button class="button-warning" @click="approve">Approve</Button>
             </div>
           </div>
 
-          <div v-if="current == 2" class="step-3">
-            <img src="@/assets/icon/tag.png" alt="" class="icon-price" />
+          <div v-if="current == 1" class="step-2">
+            <img :src="item.data.image" alt="" class="item-image" />
             <div class="content">
-              <div class="content-title">
-                <img src="@/assets/icon/salary.png" alt="" class="title-icon" />
-                <div class="title-text">Set price of item</div>
-              </div>
-              <div class="input-group">
-                <Input
-                  type="number"
-                  v-model="price.value"
-                  :isInvalid="price.isInvalid"
-                  :msgInvalid="price.msgInvalid"
-                  :min="0"
-                  placeholder="Enter price of item"
-                  class="input-secondary"
+              <div class="notice">
+                <img
+                  src="@/assets/icon/confirmation.png"
+                  alt=""
+                  class="notice-icon"
                 />
-                <div class="symboy">{{ symbol }}</div>
+                <div class="notice-text">
+                  Buy <span class="item-name">{{ item.data.name }}</span> with
+                  price
+                  <span class="price-item">{{ getPrice }} {{ symbol }}</span>
+                </div>
               </div>
-              <Button @click="confirmPrice">Next</Button>
-            </div>
-          </div>
-
-          <div v-if="current == 3" class="step-4">
-            <img
-              src="@/assets/icon/marketplace.png"
-              alt=""
-              class="icon-marketplace"
-            />
-            <div class="content">
-              <div class="content-title">
-                Sell item <span class="item-name">{{ item.name }}</span> for
-                <span class="item-price">{{ price.value }} {{ symbol }}</span>
-              </div>
-              <div class="action-group">
-                <Button @click="back" class="button-secondary">Back</Button>
-                <Button @click="onSell">On Sell</Button>
-              </div>
+              <Button @click="confirmBuy">Confirm</Button>
             </div>
           </div>
         </div>
@@ -105,7 +67,7 @@ import { mapState } from 'vuex';
 import { utils } from 'web3';
 import toast from '@/components/mixins/toast.js';
 import loader from '@/components/mixins/loader.js';
-import { payListingCost, approveNFT, onSellNFT } from '@/web3/functions.js';
+import { approveToken, buyNFT } from '@/web3/functions.js';
 
 export default {
   mixins: [toast, loader],
@@ -117,12 +79,11 @@ export default {
       account: (state) => state.user.account,
       balance: (state) => state.user.balance,
       isOwner: (state) => state.user.isOwner,
-      listingCost: (state) => state.app.market?.listingCost,
       symbol: (state) => state.app.token?.symbol,
     }),
-    getListingCost() {
-      if (this.listingCost) {
-        return utils.fromWei(this.listingCost);
+    getPrice() {
+      if (this.item.price) {
+        return utils.fromWei(this.item.price);
       }
       return 0;
     },
@@ -132,23 +93,12 @@ export default {
       current: 0,
       steps: [
         {
-          title: 'Pay fee',
+          title: 'Approve transfer token',
         },
         {
-          title: 'Approve NFT',
-        },
-        {
-          title: 'Price',
-        },
-        {
-          title: 'On Sell',
+          title: 'Confirm buy item',
         },
       ],
-      price: {
-        value: undefined,
-        isInvalid: false,
-        msgInvalid: '',
-      },
     };
   },
   methods: {
@@ -158,94 +108,46 @@ export default {
     back() {
       this.current--;
     },
-    validatePriceValue() {
-      let valid = true;
-      if (this.price.value == undefined || this.price.value == '') {
-        valid = false;
-        this.price.isInvalid = true;
-        this.price.msgInvalid = "Price can't be empty";
-      } else if (this.price.value <= 0) {
-        valid = false;
-        this.price.isInvalid = true;
-        this.price.msgInvalid = 'Price must be great than 0';
-      } else {
-        this.price.isInvalid = false;
-      }
-      return valid;
-    },
     closePopup() {
       this.$emit('close');
     },
 
     /**
-     * Pay listing cost
-     */
-    async pay() {
-      this.showLoading();
-      try {
-        await payListingCost(this.account);
-        this.next();
-        this.success('Pay fee success');
-      } catch (error) {
-        console.log(error);
-        this.error('Pay fee failed');
-      }
-      this.closeLoading();
-    },
-
-    /**
-     * Approve nft for market
+     * Approve market transfer token to seller
      */
     async approve() {
       this.showLoading();
       try {
-        await approveNFT(this.item.tokenId, this.account);
+        await approveToken(this.item.price, this.account);
         this.next();
-        this.success('Approve item success');
+        this.success('Approve transfer token success');
       } catch (error) {
         console.log(error);
-        this.error('Approve item failed');
+        this.error('Approve transfer token failed');
       }
       this.closeLoading();
     },
 
     /**
-     * Confirm price
+     * Buy item
      */
-    confirmPrice() {
-      if (this.validatePriceValue()) {
-        this.next();
-      }
-    },
-
-    /**
-     * On sell item
-     */
-    async onSell() {
+    async confirmBuy() {
       this.showLoading();
       try {
-        await onSellNFT(this.item.tokenId, this.price.value, this.account);
+        await buyNFT(this.item.itemId, this.account);
         this.$emit('success');
       } catch (error) {
         console.log(error);
-        this.error('On sell item failed');
+        this.error('Buy item fail');
         this.closeLoading();
       }
-    },
-  },
-  watch: {
-    price: {
-      handler() {
-        this.validatePriceValue();
-      },
-      deep: true,
     },
   },
 };
 </script>
 
 <style lang="scss">
-.sell-popup {
+.buy-popup {
   position: fixed;
   top: 0;
   left: 0;
@@ -288,6 +190,8 @@ export default {
       margin: 0 16px;
       border-radius: 4px;
       .ant-steps {
+        width: 500px;
+        margin: auto;
         .ant-steps-item {
           &.ant-steps-item-process {
             .ant-steps-item-container {
@@ -366,8 +270,8 @@ export default {
               display: flex;
               align-items: center;
               .notice-icon {
-                width: 32px;
-                height: 32px;
+                width: 40px;
+                height: 40px;
                 margin-right: 16px;
               }
               .notice-text {
@@ -375,7 +279,7 @@ export default {
                 color: $color-white;
               }
             }
-            .fee-value {
+            .price-value {
               font-size: 32px;
               margin-left: 32px;
               color: $color-gray-2;
@@ -407,73 +311,15 @@ export default {
                 padding-right: 32px;
                 span {
                   font-family: $font-bold;
+                  color: $color-success-4;
+                }
+                span.price-item {
+                  color: $color-warning-4;
                 }
               }
             }
             .button {
               margin-top: auto;
-            }
-          }
-        }
-        .step-3 {
-          display: flex;
-          .icon-price {
-            width: 192px;
-            margin: 0 32px;
-          }
-          .content {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            .content-title {
-              display: flex;
-              align-items: center;
-              .title-icon {
-                width: 36px;
-                margin-right: 16px;
-              }
-              .title-text {
-                color: $color-white;
-                font-size: 24px;
-              }
-            }
-            .input-group {
-              display: flex;
-              align-items: center;
-              .symboy {
-                margin-left: 16px;
-                font-size: 32px;
-                color: $color-warning-4;
-              }
-            }
-          }
-        }
-        .step-4 {
-          display: flex;
-          .icon-marketplace {
-            width: 192px;
-            margin: 0 32px;
-          }
-          .content {
-            display: flex;
-            flex-direction: column;
-            .content-title {
-              font-size: 42px;
-              color: $color-white;
-              .item-name {
-                font-family: $font-bold;
-              }
-              .item-price {
-                color: $color-warning-4;
-              }
-            }
-            .action-group {
-              margin-top: auto;
-              display: flex;
-              align-items: center;
-              .button-secondary {
-                margin-right: 16px;
-              }
             }
           }
         }

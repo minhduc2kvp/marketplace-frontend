@@ -69,7 +69,7 @@
                     {{ formatToken(tank.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="buyItem(tank)">
+                <Button class="button-success" @click="onBuyItem(tank)">
                   Buy
                 </Button>
               </div>
@@ -118,7 +118,7 @@
                     {{ formatToken(bullet.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="buyItem(bullet)">
+                <Button class="button-success" @click="onBuyItem(bullet)">
                   Buy
                 </Button>
               </div>
@@ -157,7 +157,7 @@
                     {{ formatToken(explosion.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="buyItem(explosion)">
+                <Button class="button-success" @click="onBuyItem(explosion)">
                   Buy
                 </Button>
               </div>
@@ -165,6 +165,14 @@
           </div>
         </div>
       </div>
+
+      <!-- Buy popup -->
+      <BuyPopup
+        v-if="isShowBuyPopup"
+        @close="closeBuyPopup"
+        @success="buySuccess"
+        :item="itemSelected"
+      />
     </div>
   </Layout>
 </template>
@@ -175,15 +183,18 @@ import { TypeNFT } from '@/commons/enums.js';
 import Web3 from 'web3';
 import toast from '@/components/mixins/toast.js';
 import loader from '@/components/mixins/loader.js';
-import { buyNFT } from '@/web3/functions.js';
+import BuyPopup from './BuyPopup.vue';
 
 export default {
   mixins: [loader, toast],
+  components: { BuyPopup },
   data() {
     return {
       navItemSelected: {},
       navItems: [],
       TypeNFT,
+      isShowBuyPopup: false,
+      itemSelected: {},
     };
   },
   computed: {
@@ -217,26 +228,6 @@ export default {
     /**
      *
      */
-    async buyItem(item) {
-      if (!this.account) {
-        this.warning('You are not login');
-        return;
-      }
-      this.showLoading();
-      try {
-        await buyNFT(item.itemId, item.price, this.account);
-        await this.init();
-        this.success('Buy item success');
-      } catch (error) {
-        console.log(error);
-        this.error('Buy item failed');
-      }
-      this.closeLoading();
-    },
-
-    /**
-     *
-     */
     async refresh() {
       this.showLoading();
       try {
@@ -246,6 +237,43 @@ export default {
         this.error('Something went wrong');
       }
       this.closeLoading();
+    },
+
+    /**
+     *
+     */
+    onBuyItem(item) {
+      if (!this.account) {
+        this.warning('You are not login');
+        return;
+      }
+      this.itemSelected = item;
+      this.showBuyPopup();
+    },
+
+    /**
+     *
+     */
+    async buySuccess() {
+      this.closeBuyPopup();
+      try {
+        await this.init();
+        this.success('Buy item success');
+      } catch (error) {
+        console.log(error);
+        this.error('Something went wrong');
+      }
+      this.closeLoading();
+    },
+
+    /**
+     * Control Buy Popup
+     */
+    showBuyPopup() {
+      this.isShowBuyPopup = true;
+    },
+    closeBuyPopup() {
+      this.isShowBuyPopup = false;
     },
 
     /**
