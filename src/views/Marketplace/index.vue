@@ -21,8 +21,31 @@
 
         <!-- List items -->
         <div class="list-items">
+          <!-- No content notice -->
+          <div
+            class="no-content-notice"
+            v-if="
+              (navItemSelected.type == TypeNFT.Tank &&
+                getTanks &&
+                getTanks.length == 0) ||
+              (navItemSelected.type == TypeNFT.Bullet &&
+                getBullets &&
+                getBullets.length == 0) ||
+              (navItemSelected.type == TypeNFT.Explosion &&
+                getExplosions &&
+                getExplosions.length == 0)
+            "
+          >
+            <img
+              src="@/assets/icon/no-content.png"
+              alt=""
+              class="icon-no-content"
+            />
+            <div class="msg-no-content">No items found</div>
+          </div>
+
           <!-- List tank item -->
-          <div v-show="navItemSelected.type == 1" class="list-tank">
+          <div v-show="navItemSelected.type == TypeNFT.Tank" class="list-tank">
             <div
               v-for="(tank, index) in getTanks"
               :key="index"
@@ -77,7 +100,10 @@
           </div>
 
           <!-- List bullet item -->
-          <div v-show="navItemSelected.type == 2" class="list-bullet">
+          <div
+            v-show="navItemSelected.type == TypeNFT.Bullet"
+            class="list-bullet"
+          >
             <div
               v-for="(bullet, index) in getBullets"
               :key="index"
@@ -126,7 +152,10 @@
           </div>
 
           <!-- List explosion item -->
-          <div v-show="navItemSelected.type == 3" class="list-explosion">
+          <div
+            v-show="navItemSelected.type == TypeNFT.Explosion"
+            class="list-explosion"
+          >
             <div
               v-for="(explosion, index) in getExplosions"
               :key="index"
@@ -369,6 +398,26 @@ export default {
       flex-grow: 1;
       display: flex;
       align-items: center;
+      position: relative;
+
+      .no-content-notice {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: auto;
+        .icon-no-content {
+          width: 128px;
+        }
+        .msg-no-content {
+          color: $color-warning-4;
+          margin-top: 16px;
+          font-size: 24px;
+        }
+      }
 
       .list-tank,
       .list-bullet,
