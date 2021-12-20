@@ -6,6 +6,7 @@ import Range from '@/components/base/Range.vue';
 import Dropdown from '@/components/base/Dropdown.vue';
 import UploadArea from '@/components/base/UploadArea.vue';
 import Dialog from '@/components/base/Dialog.vue';
+import Popup from '@/components/base/Popup.vue';
 import Vue from 'vue';
 
 Vue.component('Layout', Layout);
@@ -16,3 +17,4 @@ Vue.component('Range', Range);
 Vue.component('Dropdown', Dropdown);
 Vue.component('UploadArea', UploadArea);
 Vue.component('Dialog', Dialog);
+Vue.component('Popup', Popup);

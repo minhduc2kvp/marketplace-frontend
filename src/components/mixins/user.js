@@ -11,6 +11,7 @@ const user = {
       'setAccount',
       'setBalance',
       'setNFTs',
+      'setItemsOnSell',
       'setIsOwner',
       'reset',
     ]),
@@ -23,6 +24,7 @@ const user = {
       const assets = await getAccountAssets(account);
       this.setBalance(assets.balance);
       this.setNFTs(assets.nfts);
+      this.setItemsOnSell(assets.itemsOnSell);
     },
 
     /**

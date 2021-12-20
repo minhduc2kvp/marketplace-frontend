@@ -197,6 +197,70 @@
           </div>
         </div>
       </div>
+
+      <!-- List explosion item -->
+      <div v-if="itemsOnSell.length > 0" class="items-on-sell">
+        <div class="asset-title">
+          <img src="@/assets/icon/delivery-box.png" alt="" class="title-icon" />
+          <div class="title-text">Items On Sell</div>
+        </div>
+        <div class="list-item">
+          <div v-for="(item, index) in itemsOnSell" :key="index" class="item">
+            <img
+              :src="item.image"
+              @loadstart="imageIsLoad($event)"
+              @load="imageIsLoaded($event)"
+              alt=""
+              class="item-image"
+            />
+            <div class="item-info">
+              <div class="item-name" :title="item.name">
+                {{ item.name }}
+              </div>
+              <div class="item-description" :title="item.description">
+                {{ item.description }}
+              </div>
+              <!-- Tank properties -->
+              <div v-if="item.type == TypeNFT.Tank" class="tank-properties">
+                <div class="tank-armor">
+                  <img
+                    src="@/assets/icon/shield.png"
+                    alt=""
+                    class="armor-icon"
+                  />
+                  <div class="armor-value">{{ item.properties.armor }}</div>
+                </div>
+                <img
+                  :src="
+                    require(`@/assets/icon/level${item.properties.level}.png`)
+                  "
+                  alt=""
+                  class="tank-level"
+                />
+              </div>
+              <!-- Bullet properties -->
+              <div v-if="item.type == TypeNFT.Bullet" class="bullet-properties">
+                <div class="bullet-damage">
+                  <img
+                    src="@/assets/icon/swords.png"
+                    alt=""
+                    class="damage-icon"
+                  />
+                  <div class="damage-value">{{ item.properties.damage }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="action-container">
+              <Button
+                @click="cancelSell(item)"
+                class="button-burn button-warning"
+              >
+                Cancel Sell
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Dialog sell item -->
@@ -230,6 +294,15 @@
       @success="onSellSuccess"
       :item="itemSelected"
     />
+
+    <!-- Popup -->
+    <Popup
+      :isShowPopup="isShowPopup"
+      :type="type"
+      :message="message"
+      :buttons="buttons"
+      @close="closePopup"
+    />
   </div>
 </template>
 
@@ -240,11 +313,12 @@ import { TypeNFT } from '@/commons/enums.js';
 import toast from '@/components/mixins/toast.js';
 import user from '@/components/mixins/user.js';
 import loader from '@/components/mixins/loader.js';
-import { burnNFT, sellNFT } from '@/web3/functions.js';
+import popup from '@/components/mixins/popup.js';
+import { burnNFT, sellNFT, cancelSell } from '@/web3/functions.js';
 import SellPopup from './SellPopup.vue';
 
 export default {
-  mixins: [toast, user, loader],
+  mixins: [toast, user, loader, popup],
   components: { SellPopup },
   data() {
     return {
@@ -255,6 +329,7 @@ export default {
         msgInvalid: '',
       },
       itemSelected: {},
+      TypeNFT,
     };
   },
   computed: {
@@ -263,6 +338,7 @@ export default {
       balance: (state) => state.user.balance,
       isOwner: (state) => state.user.isOwner,
       nfts: (state) => state.user.nfts,
+      itemsOnSell: (state) => state.user.itemsOnSell,
       symbol: (state) => state.app.token?.symbol,
     }),
     getBalance() {
@@ -370,6 +446,42 @@ export default {
         this.error('Something went wrong');
       }
       this.closeLoading();
+    },
+
+    /**
+     * Cancel sell item
+     */
+    cancelSell(item) {
+      const buttons = [
+        {
+          text: 'No',
+          class: 'button-secondary',
+          function: () => {
+            this.closePopup();
+          },
+        },
+        {
+          text: 'Yes',
+          class: 'button-warning',
+          function: async () => {
+            this.closePopup();
+            this.showLoading();
+            try {
+              await cancelSell(item.itemId, this.account);
+              await this.loadAssetAccount(this.account);
+            } catch (error) {
+              this.error();
+              console.log(error);
+            }
+            this.closeLoading();
+          },
+        },
+      ];
+      this.showPopup(
+        'warning',
+        `Are your sure want to cancel sell item ${item.name}`,
+        buttons
+      );
     },
 
     /**
@@ -789,6 +901,137 @@ export default {
               max-height: 50px;
               overflow: hidden;
               text-overflow: ellipsis;
+            }
+          }
+
+          &:hover {
+            .action-container {
+              opacity: 1;
+            }
+          }
+          .action-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            background-color: rgba($color-white, 0.3);
+            display: flex;
+            opacity: 0;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            .button-sell {
+              margin-right: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .items-on-sell {
+      width: 100%;
+      margin-top: 12px;
+      background-color: $color-gray-5;
+      border-radius: 4px;
+      padding: 16px;
+      .asset-title {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        .title-icon {
+          width: 32px;
+          margin-right: 8px;
+        }
+      }
+      .list-item {
+        min-width: 100%;
+        width: 500px;
+        overflow-x: auto;
+        margin-top: 8px;
+        display: flex;
+        padding: 8px 0;
+        .item {
+          margin-right: 16px;
+          display: flex;
+          align-items: center;
+          padding: 16px;
+          min-width: 400px;
+          max-width: 400px;
+          width: 400px;
+          border-radius: 4px;
+          background-color: $color-gray-6;
+          position: relative;
+          .item-image {
+            width: 150px;
+            min-width: 150px;
+            max-height: 150px;
+            border-radius: 4px;
+            &.on-load {
+              height: 150px;
+              background-image: url('../../assets/icon/spinner.gif');
+              background-position: center;
+              background-repeat: no-repeat;
+              background-size: 64px;
+            }
+          }
+          .item-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+            margin-left: 12px;
+            .item-name {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            .item-description {
+              margin-top: 4px;
+              font-size: 12px;
+              color: $color-gray-1;
+              max-height: 50px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .tank-properties {
+              margin-top: auto;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              .tank-armor {
+                display: flex;
+                align-items: center;
+                .armor-icon {
+                  width: 24px;
+                  margin-right: 4px;
+                }
+                .armor-value {
+                  font-size: 16px;
+                }
+              }
+              .tank-level {
+                width: 24px;
+                margin-left: auto;
+              }
+            }
+
+            .bullet-properties {
+              margin-top: auto;
+              .bullet-damage {
+                display: flex;
+                align-items: center;
+                .damage-icon {
+                  width: 24px;
+                  margin-right: 4px;
+                }
+                .damage-value {
+                  font-size: 16px;
+                }
+              }
             }
           }
 

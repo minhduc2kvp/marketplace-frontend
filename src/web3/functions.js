@@ -18,6 +18,10 @@ const getAccountAssets = async function (account) {
   const web3 = new Web3(window.ethereum);
   const tokenContract = new web3.eth.Contract(TankToken.abi, tankTokenAddress);
   const nftContract = new web3.eth.Contract(TankNFT.abi, tankNFTAddress);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
 
   const tokenBalance = await tokenContract.methods.balanceOf(account).call();
   const nftBalance = await nftContract.methods.balanceOf(account).call();
@@ -32,7 +36,22 @@ const getAccountAssets = async function (account) {
     nfts.push({ tokenId, ...JSON.parse(tokenURI) });
   }
 
-  return { balance: tokenBalance, nfts };
+  // get items on sell
+  const itemsOnSell = [];
+  const items = await marketContract.methods
+    .getMyItemsOnSell()
+    .call({ from: account });
+  for (let index = 0; index < items.length; index++) {
+    const tokenId = items[index].tokenId;
+    const tokenURI = await nftContract.methods.tokenURI(tokenId).call();
+    itemsOnSell.push({
+      itemId: items[index].itemId,
+      tokenId,
+      ...JSON.parse(tokenURI),
+    });
+  }
+
+  return { balance: tokenBalance, nfts, itemsOnSell };
 };
 
 /**
@@ -307,6 +326,22 @@ const buyNFT = async function (itemId, sender) {
   await marketContract.methods.sellMarketItem(itemId).send({ from: sender });
 };
 
+/**
+ * Cancel sell item on market
+ * @param {Number} itemId
+ * @param {String} sender
+ */
+const cancelSell = async function (itemId, sender) {
+  const web3 = new Web3(window.ethereum);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  // cancel sell item
+  await marketContract.methods.cancelSellItem(itemId).send({ from: sender });
+};
+
 export {
   getAccountAssets,
   getTokenContract,
@@ -320,4 +355,5 @@ export {
   approveNFT,
   onSellNFT,
   approveToken,
+  cancelSell,
 };
