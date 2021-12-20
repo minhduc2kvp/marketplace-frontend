@@ -342,6 +342,26 @@ const cancelSell = async function (itemId, sender) {
   await marketContract.methods.cancelSellItem(itemId).send({ from: sender });
 };
 
+const getItemHistory = async function (tokenId) {
+  const web3 = new Web3(window.ethereum);
+  const marketContract = new web3.eth.Contract(
+    TankMarket.abi,
+    tankMarketAddress
+  );
+
+  const res = await marketContract.methods.getHistories(tokenId).call();
+  const histories = [];
+  res.forEach((history) => {
+    histories.push({
+      seller: history.seller,
+      buyer: history.owner,
+      price: history.price,
+    });
+  });
+
+  return histories;
+};
+
 export {
   getAccountAssets,
   getTokenContract,
@@ -356,4 +376,5 @@ export {
   onSellNFT,
   approveToken,
   cancelSell,
+  getItemHistory,
 };

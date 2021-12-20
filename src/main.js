@@ -12,7 +12,7 @@ import globalComponents from './global-components';
 Vue.config.productionTip = false;
 
 Vue.use(Antd);
-Vue.use(VueToast);
+Vue.use(VueToast, { position: 'top-right' });
 
 new Vue({
   router,

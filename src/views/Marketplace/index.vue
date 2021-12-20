@@ -92,9 +92,12 @@
                     {{ formatToken(tank.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="onBuyItem(tank)">
-                  Buy
-                </Button>
+                <div class="button-group">
+                  <Button class="button-success" @click="onBuyItem(tank)">
+                    Buy
+                  </Button>
+                  <Button @click="detailItem(tank)"> Detail </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -144,9 +147,12 @@
                     {{ formatToken(bullet.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="onBuyItem(bullet)">
-                  Buy
-                </Button>
+                <div class="button-group">
+                  <Button class="button-success" @click="onBuyItem(bullet)">
+                    Buy
+                  </Button>
+                  <Button @click="detailItem(bullet)"> Detail </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -186,9 +192,12 @@
                     {{ formatToken(explosion.price) }} {{ symbol }}
                   </div>
                 </div>
-                <Button class="button-success" @click="onBuyItem(explosion)">
-                  Buy
-                </Button>
+                <div class="button-group">
+                  <Button class="button-success" @click="onBuyItem(explosion)">
+                    Buy
+                  </Button>
+                  <Button @click="detailItem(explosion)"> Detail </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -202,6 +211,13 @@
         @success="buySuccess"
         :item="itemSelected"
       />
+
+      <!-- Detail popup -->
+      <DetailPopup
+        v-if="isShowDetailPopup"
+        :item="itemSelected"
+        @close="closeDetailPopup"
+      />
     </div>
   </Layout>
 </template>
@@ -213,16 +229,18 @@ import Web3 from 'web3';
 import toast from '@/components/mixins/toast.js';
 import loader from '@/components/mixins/loader.js';
 import BuyPopup from './BuyPopup.vue';
+import DetailPopup from './DetailPopup.vue';
 
 export default {
   mixins: [loader, toast],
-  components: { BuyPopup },
+  components: { BuyPopup, DetailPopup },
   data() {
     return {
       navItemSelected: {},
       navItems: [],
       TypeNFT,
       isShowBuyPopup: false,
+      isShowDetailPopup: false,
       itemSelected: {},
     };
   },
@@ -313,6 +331,24 @@ export default {
     },
     imageIsLoaded(event) {
       event.target.classList.remove('on-load');
+    },
+
+    /**
+     * Control Detail Popup
+     */
+    showDetailPopup() {
+      this.isShowDetailPopup = true;
+    },
+    closeDetailPopup() {
+      this.isShowDetailPopup = false;
+    },
+
+    /**
+     * Detail item
+     */
+    detailItem(item) {
+      this.itemSelected = item;
+      this.showDetailPopup();
     },
   },
   async created() {
@@ -534,6 +570,10 @@ export default {
               font-size: 24px;
             }
           }
+          .button-group {
+            display: flex;
+            justify-content: space-around;
+          }
         }
       }
 
@@ -629,6 +669,10 @@ export default {
               font-size: 24px;
             }
           }
+          .button-group {
+            display: flex;
+            justify-content: space-around;
+          }
         }
       }
 
@@ -711,6 +755,10 @@ export default {
               margin-left: 8px;
               font-size: 24px;
             }
+          }
+          .button-group {
+            display: flex;
+            justify-content: space-around;
           }
         }
       }
