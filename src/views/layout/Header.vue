@@ -50,7 +50,7 @@
     <div class="user-section">
       <router-link v-if="!account" class="login-button" to="/login">
         <img class="button-icon" src="@/assets/icon/login.png" alt="" />
-        <div class="button-text">{{ $t('app.login') }}</div>
+        <div class="button-text">{{ $t('button.login') }}</div>
       </router-link>
       <router-link v-if="account" class="user-profile-button" to="/profile">
         <img class="button-icon" src="@/assets/icon/user.png" alt="" />

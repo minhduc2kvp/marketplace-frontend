@@ -16,11 +16,11 @@
         <div class="bar-footer">
           <router-link v-if="isOwner" class="admin-link" to="/admin">
             <img src="@/assets/icon/admin.png" alt="" class="item-icon" />
-            <div class="item-text">Admin</div>
+            <div class="item-text">{{ $t('button.admin') }}</div>
           </router-link>
           <Button @click="handleLogout" class="button-danger">
             <img src="@/assets/icon/logout.png" alt="" class="icon-button" />
-            <div class="text-button">Logout</div>
+            <div class="text-button">{{ $t('button.logout') }}</div>
           </Button>
         </div>
       </div>
@@ -44,14 +44,14 @@ export default {
       subRoutes: [
         {
           path: 'account',
-          text: 'Account',
+          text: this.$t('profile.account'),
           icon: require('@/assets/icon/card.png'),
         },
-        {
-          path: 'history',
-          text: 'History',
-          icon: require('@/assets/icon/history.png'),
-        },
+        // {
+        //   path: 'history',
+        //   text: 'History',
+        //   icon: require('@/assets/icon/history.png'),
+        // },
       ],
     };
   },

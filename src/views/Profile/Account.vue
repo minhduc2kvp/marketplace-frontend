@@ -3,14 +3,14 @@
     <div class="account-content">
       <div class="title-content">
         <img src="@/assets/icon/wallet.png" alt="" class="title-icon" />
-        <div class="title-text">Wallet</div>
+        <div class="title-text">{{ $t('profile.wallet') }}</div>
       </div>
 
       <!-- Information of account -->
       <div class="account-info">
         <div class="account-address">
           <img src="@/assets/icon/link.png" alt="" class="address-icon" />
-          <div class="address-title">Address:</div>
+          <div class="address-title">{{ $t('profile.address') }}:</div>
           <div class="address-text">{{ account }}</div>
         </div>
         <img
@@ -84,14 +84,14 @@
                 @click="sellItem(tank)"
                 class="button-sell button-danger-v2"
               >
-                Sell
+                {{ $t('button.sell') }}
               </Button>
               <Button
                 v-if="isOwner"
                 @click="burnItem(tank.tokenId)"
                 class="button-burn button-warning"
               >
-                Burn
+                {{ $t('button.burn') }}
               </Button>
             </div>
           </div>
@@ -138,14 +138,14 @@
                 @click="sellItem(bullet)"
                 class="button-sell button-danger-v2"
               >
-                Sell
+                {{ $t('button.sell') }}
               </Button>
               <Button
                 v-if="isOwner"
                 @click="burnItem(bullet.tokenId)"
                 class="button-burn button-warning"
               >
-                Burn
+                {{ $t('button.burn') }}
               </Button>
             </div>
           </div>
@@ -184,14 +184,14 @@
                 @click="sellItem(explosion)"
                 class="button-sell button-danger-v2"
               >
-                Sell
+                {{ $t('button.sell') }}
               </Button>
               <Button
                 v-if="isOwner"
                 @click="burnItem(explosion.tokenId)"
                 class="button-burn button-warning"
               >
-                Burn
+                {{ $t('button.burn') }}
               </Button>
             </div>
           </div>
@@ -255,7 +255,7 @@
                 @click="cancelSell(item)"
                 class="button-burn button-warning"
               >
-                Cancel Sell
+                {{ $t('button.cancelSell') }}
               </Button>
             </div>
           </div>
@@ -357,7 +357,7 @@ export default {
   methods: {
     copyAddress() {
       navigator.clipboard.writeText(this.account);
-      this.success('Copy address successfull');
+      this.success(this.$t('message.copyAddressSuccess'));
     },
     closeDialogSI() {
       this.isShowDialogSI = false;
@@ -410,7 +410,7 @@ export default {
           this.success('Item is on sale');
         } catch (error) {
           console.log(error);
-          this.error('Something went wrong');
+          this.error();
         }
         this.closeLoading();
       }
@@ -424,10 +424,10 @@ export default {
       try {
         await burnNFT(tokenId, this.account);
         await this.loadAssetAccount(this.account);
-        this.success('Burn item success');
+        this.success(this.$t('message.burnItemSuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Something went wrong');
+        this.error();
       }
       this.closeLoading();
     },
@@ -440,10 +440,10 @@ export default {
       try {
         await this.loadAssetAccount(this.account);
         this.itemSelected = {};
-        this.success('On sell success');
+        this.success(this.$t('message.onSellSuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Something went wrong');
+        this.error();
       }
       this.closeLoading();
     },
@@ -454,14 +454,14 @@ export default {
     cancelSell(item) {
       const buttons = [
         {
-          text: 'No',
+          text: this.$t('button.no'),
           class: 'button-secondary',
           function: () => {
             this.closePopup();
           },
         },
         {
-          text: 'Yes',
+          text: this.$t('button.yes'),
           class: 'button-warning',
           function: async () => {
             this.closePopup();
@@ -479,7 +479,7 @@ export default {
       ];
       this.showPopup(
         'warning',
-        `Are your sure want to cancel sell item ${item.name}`,
+        this.$t('profile.noticeCancelSell', [item.name]),
         buttons
       );
     },

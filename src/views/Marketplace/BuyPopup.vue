@@ -7,9 +7,10 @@
         alt=""
         class="icon-close"
       />
-      <div class="popup-header">
-        Buy item <span>{{ item.data.name }}</span>
-      </div>
+      <div
+        class="popup-header"
+        v-html="$t('marketplace.buyItem', [item.data.name])"
+      ></div>
       <div class="popup-content">
         <a-steps :current="current">
           <a-step v-for="step in steps" :key="step.title" :title="step.title" />
@@ -25,13 +26,16 @@
                   class="notice-icon"
                 />
                 <div class="notice-text">
-                  Approve market to tranfer to seller
+                  {{ $t('marketplace.approveTokenMsg') }}
                 </div>
               </div>
               <div class="price-value">
-                Price <span>{{ getPrice }} {{ symbol }}</span>
+                {{ $t('marketplace.price') }}
+                <span>{{ getPrice }} {{ symbol }}</span>
               </div>
-              <Button class="button-warning" @click="approve">Approve</Button>
+              <Button class="button-warning" @click="approve">
+                {{ $t('button.approve') }}
+              </Button>
             </div>
           </div>
 
@@ -44,19 +48,26 @@
                   alt=""
                   class="notice-icon"
                 />
-                <div class="notice-text">
-                  Buy <span class="item-name">{{ item.data.name }}</span> with
-                  price
-                  <span class="price-item">{{ getPrice }} {{ symbol }}</span>
-                </div>
+                <div
+                  class="notice-text"
+                  v-html="
+                    $t('marketplace.noticeTextStep2', [
+                      item.data.name,
+                      getPrice,
+                      symbol,
+                    ])
+                  "
+                ></div>
               </div>
-              <Button @click="confirmBuy">Confirm</Button>
+              <Button @click="confirmBuy">{{ $t('button.confirm') }}</Button>
             </div>
           </div>
         </div>
       </div>
       <div class="popup-footer">
-        <Button class="button-secondary" @click="closePopup">Close</Button>
+        <Button class="button-secondary" @click="closePopup">
+          {{ $t('button.close') }}
+        </Button>
       </div>
     </div>
   </div>
@@ -93,10 +104,10 @@ export default {
       current: 0,
       steps: [
         {
-          title: 'Approve transfer token',
+          title: this.$t('marketplace.titleStep1'),
         },
         {
-          title: 'Confirm buy item',
+          title: this.$t('marketplace.titleStep2'),
         },
       ],
     };
@@ -120,10 +131,10 @@ export default {
       try {
         await approveToken(this.item.price, this.account);
         this.next();
-        this.success('Approve transfer token success');
+        this.success(this.$t('message.approveSuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Approve transfer token failed');
+        this.error();
       }
       this.closeLoading();
     },
@@ -138,7 +149,7 @@ export default {
         this.$emit('success');
       } catch (error) {
         console.log(error);
-        this.error('Buy item fail');
+        this.error();
         this.closeLoading();
       }
     },
@@ -190,7 +201,7 @@ export default {
       margin: 0 16px;
       border-radius: 4px;
       .ant-steps {
-        width: 500px;
+        width: 550px;
         margin: auto;
         .ant-steps-item {
           &.ant-steps-item-process {

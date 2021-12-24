@@ -41,7 +41,7 @@
               alt=""
               class="icon-no-content"
             />
-            <div class="msg-no-content">No items found</div>
+            <div class="msg-no-content">{{ $t('marketplace.noitems') }}</div>
           </div>
 
           <!-- List tank item -->
@@ -94,9 +94,11 @@
                 </div>
                 <div class="button-group">
                   <Button class="button-success" @click="onBuyItem(tank)">
-                    Buy
+                    {{ $t('button.buy') }}
                   </Button>
-                  <Button @click="detailItem(tank)"> Detail </Button>
+                  <Button @click="detailItem(tank)">
+                    {{ $t('button.detail') }}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -149,9 +151,11 @@
                 </div>
                 <div class="button-group">
                   <Button class="button-success" @click="onBuyItem(bullet)">
-                    Buy
+                    {{ $t('button.buy') }}
                   </Button>
-                  <Button @click="detailItem(bullet)"> Detail </Button>
+                  <Button @click="detailItem(bullet)">
+                    {{ $t('button.detail') }}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -194,9 +198,11 @@
                 </div>
                 <div class="button-group">
                   <Button class="button-success" @click="onBuyItem(explosion)">
-                    Buy
+                    {{ $t('button.buy') }}
                   </Button>
-                  <Button @click="detailItem(explosion)"> Detail </Button>
+                  <Button @click="detailItem(explosion)">
+                    {{ $t('button.detail') }}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -281,7 +287,7 @@ export default {
         await this.init();
       } catch (error) {
         console.log(error);
-        this.error('Something went wrong');
+        this.error();
       }
       this.closeLoading();
     },
@@ -291,7 +297,7 @@ export default {
      */
     onBuyItem(item) {
       if (!this.account) {
-        this.warning('You are not login');
+        this.warning(this.$t('message.notLogin'));
         return;
       }
       this.itemSelected = item;
@@ -305,10 +311,10 @@ export default {
       this.closeBuyPopup();
       try {
         await this.init();
-        this.success('Buy item success');
+        this.success(this.$t('message.buySuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Something went wrong');
+        this.error();
       }
       this.closeLoading();
     },
@@ -433,7 +439,7 @@ export default {
       overflow-y: auto;
       flex-grow: 1;
       display: flex;
-      align-items: center;
+      // align-items: center;
       position: relative;
 
       .no-content-notice {
@@ -449,6 +455,7 @@ export default {
           width: 128px;
         }
         .msg-no-content {
+          font-style: italic;
           color: $color-warning-4;
           margin-top: 16px;
           font-size: 24px;

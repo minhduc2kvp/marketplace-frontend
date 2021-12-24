@@ -7,9 +7,10 @@
         alt=""
         class="icon-close"
       />
-      <div class="popup-header">
-        On sell item <span>{{ item.name }}</span>
-      </div>
+      <div
+        class="popup-header"
+        v-html="$t('profile.onSell', [item.name])"
+      ></div>
       <div class="popup-content">
         <a-steps :current="current">
           <a-step v-for="step in steps" :key="step.title" :title="step.title" />
@@ -24,12 +25,13 @@
                   alt=""
                   class="notice-icon"
                 />
-                <div class="notice-text">Pay fee to list item on market</div>
+                <div class="notice-text">{{ $t('profile.payFeeList') }}</div>
               </div>
               <div class="fee-value">
-                Fee <span>{{ getListingCost }} {{ symbol }}</span>
+                {{ $t('profile.fee') }}
+                <span>{{ getListingCost }} {{ symbol }}</span>
               </div>
-              <Button @click="pay">Pay</Button>
+              <Button @click="pay">{{ $t('button.pay') }}</Button>
             </div>
           </div>
 
@@ -42,12 +44,14 @@
                   alt=""
                   class="notice-icon"
                 />
-                <div class="notice-text">
-                  Approve market to tranfer <span>{{ item.name }}</span> on
-                  market
-                </div>
+                <div
+                  class="notice-text"
+                  v-html="$t('profile.approveNFT', [item.name])"
+                ></div>
               </div>
-              <Button class="button-warning" @click="approve">Approve</Button>
+              <Button class="button-warning" @click="approve">
+                {{ $t('button.approve') }}
+              </Button>
             </div>
           </div>
 
@@ -56,7 +60,7 @@
             <div class="content">
               <div class="content-title">
                 <img src="@/assets/icon/salary.png" alt="" class="title-icon" />
-                <div class="title-text">Set price of item</div>
+                <div class="title-text">{{ $t('profile.setPrice') }}</div>
               </div>
               <div class="input-group">
                 <Input
@@ -70,7 +74,7 @@
                 />
                 <div class="symboy">{{ symbol }}</div>
               </div>
-              <Button @click="confirmPrice">Next</Button>
+              <Button @click="confirmPrice">{{ $t('button.next') }}</Button>
             </div>
           </div>
 
@@ -81,20 +85,24 @@
               class="icon-marketplace"
             />
             <div class="content">
-              <div class="content-title">
-                Sell item <span class="item-name">{{ item.name }}</span> for
-                <span class="item-price">{{ price.value }} {{ symbol }}</span>
-              </div>
+              <div
+                class="content-title"
+                v-html="$t('profile.confirmSellMsg', [item.name, item.price, symbol])"
+              ></div>
               <div class="action-group">
-                <Button @click="back" class="button-secondary">Back</Button>
-                <Button @click="onSell">On Sell</Button>
+                <Button @click="back" class="button-secondary">{{
+                  $t('button.back')
+                }}</Button>
+                <Button @click="onSell">{{ $t('button.confirm') }}</Button>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="popup-footer">
-        <Button class="button-secondary" @click="closePopup">Close</Button>
+        <Button class="button-secondary" @click="closePopup">{{
+          $t('button.close')
+        }}</Button>
       </div>
     </div>
   </div>
@@ -132,16 +140,16 @@ export default {
       current: 0,
       steps: [
         {
-          title: 'Pay fee',
+          title: this.$t('profile.stepTitle1'),
         },
         {
-          title: 'Approve NFT',
+          title: this.$t('profile.stepTitle2'),
         },
         {
-          title: 'Price',
+          title: this.$t('profile.stepTitle3'),
         },
         {
-          title: 'On Sell',
+          title: this.$t('profile.stepTitle4'),
         },
       ],
       price: {
@@ -163,11 +171,11 @@ export default {
       if (this.price.value == undefined || this.price.value == '') {
         valid = false;
         this.price.isInvalid = true;
-        this.price.msgInvalid = "Price can't be empty";
+        this.price.msgInvalid = this.$t('profile.priceEmpty');
       } else if (this.price.value <= 0) {
         valid = false;
         this.price.isInvalid = true;
-        this.price.msgInvalid = 'Price must be great than 0';
+        this.price.msgInvalid = this.$t('profile.priceInvalid');
       } else {
         this.price.isInvalid = false;
       }
@@ -185,10 +193,10 @@ export default {
       try {
         await payListingCost(this.account);
         this.next();
-        this.success('Pay fee success');
+        this.success(this.$t('message.payFeeSuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Pay fee failed');
+        this.error();
       }
       this.closeLoading();
     },
@@ -201,10 +209,10 @@ export default {
       try {
         await approveNFT(this.item.tokenId, this.account);
         this.next();
-        this.success('Approve item success');
+        this.success(this.$t('message.approveSuccess'));
       } catch (error) {
         console.log(error);
-        this.error('Approve item failed');
+        this.error();
       }
       this.closeLoading();
     },
@@ -228,7 +236,7 @@ export default {
         this.$emit('success');
       } catch (error) {
         console.log(error);
-        this.error('On sell item failed');
+        this.error();
         this.closeLoading();
       }
     },

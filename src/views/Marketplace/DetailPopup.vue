@@ -7,9 +7,10 @@
         alt=""
         class="icon-close"
       />
-      <div class="popup-header">
-        History transaction of item <span>{{ item.data.name }}</span>
-      </div>
+      <div
+        class="popup-header"
+        v-html="$t('marketplace.historyTransaction', [item.data.name])"
+      ></div>
       <div class="popup-content">
         <img
           v-show="isLoading"
@@ -20,25 +21,27 @@
         <div v-show="!isLoading && data.length > 0" class="list-transaction">
           <table v-for="(item, index) in data" :key="index" class="transaction">
             <tr class="seller">
-              <th>Seller</th>
+              <th>{{ $t('marketplace.seller') }}</th>
               <td>{{ item.seller }}</td>
             </tr>
             <tr class="buyer">
-              <th>Buyer</th>
+              <th>{{ $t('marketplace.buyer') }}</th>
               <td>{{ item.buyer }}</td>
             </tr>
             <tr class="price">
-              <th>Price</th>
+              <th>{{ $t('marketplace.price') }}</th>
               <td>{{ getPrice(item.price) }} {{ symbol }}</td>
             </tr>
           </table>
         </div>
         <div v-show="!isLoading && data.length == 0" class="list-empty">
-          No transactions yet
+          {{ $t('marketplace.notransactions') }}
         </div>
       </div>
       <div class="popup-footer">
-        <Button class="button-secondary" @click="closePopup">Close</Button>
+        <Button class="button-secondary" @click="closePopup">{{
+          $t('button.close')
+        }}</Button>
       </div>
     </div>
   </div>
@@ -177,7 +180,8 @@ export default {
         align-items: center;
         justify-content: center;
         background-color: $color-gray-4;
-        font-size: 24px;
+        font-size: 20px;
+        font-style: italic;
       }
     }
     .popup-footer {
