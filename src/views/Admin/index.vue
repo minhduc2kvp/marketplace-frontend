@@ -13,6 +13,7 @@
         </router-link>
       </div>
       <div class="main-content">
+        <!-- <input type="file" @change="uploadFiles($event)" multiple /> -->
         <router-view @formSubmit="createNFT"></router-view>
       </div>
     </div>
@@ -62,6 +63,21 @@ export default {
     }),
   },
   methods: {
+    async uploadFiles(event) {
+      const files = event.target.files;
+      const result = [];
+      this.showLoading();
+      try {
+        for (let index = 26; index < files.length; index++) {
+          const url = await uploadFile(files[index]);
+          result.push(url);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      console.log(result);
+      this.closeLoading();
+    },
     onChange(event) {
       this.file = event.target.files[0];
     },

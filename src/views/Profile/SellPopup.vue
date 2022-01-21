@@ -87,7 +87,9 @@
             <div class="content">
               <div
                 class="content-title"
-                v-html="$t('profile.confirmSellMsg', [item.name, item.price, symbol])"
+                v-html="
+                  $t('profile.confirmSellMsg', [item.name, price.value, symbol])
+                "
               ></div>
               <div class="action-group">
                 <Button @click="back" class="button-secondary">{{
